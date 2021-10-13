@@ -1,0 +1,4 @@
+#Tue Oct 12 23:23:05 EDT 2021
+base.0=/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/ipair/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
