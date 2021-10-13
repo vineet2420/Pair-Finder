@@ -1,4 +1,5 @@
 import "package:flutter/cupertino.dart";
+import 'package:flutter/material.dart';
 
 class Constants {
 
@@ -13,4 +14,7 @@ class Constants {
 
   String createAccountText = "Don't have an account?";
   String signUpButtonText = "Sign Up";
+
+
+  MaterialColor themeColor = Colors.indigo;
 }

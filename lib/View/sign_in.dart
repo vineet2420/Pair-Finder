@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../Controller/constants.dart';
+import 'sign_up.dart';
+import 'common_ui_elements.dart';
 
 // For the home page authentication UI
 class SignInPage extends StatefulWidget {
@@ -12,26 +14,6 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-
-
-  // Method to return a custom input field to reuse in email and password
-  // Arg: String - placeholder text
-  TextField inputField(String placeholder) {
-    const TextStyle inputFieldStyle = TextStyle(fontSize: 20.0);
-    const EdgeInsets inputFieldMargins = EdgeInsets.fromLTRB(20.0, 0, 20.0, 0);
-    var _controller = TextEditingController();
-
-    return TextField(
-      obscureText: placeholder == Constants().passwordPlaceholder,
-      style: inputFieldStyle,
-      controller: _controller,
-      decoration: InputDecoration(
-          contentPadding: inputFieldMargins,
-          hintText: placeholder,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.0))),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,8 +28,8 @@ class _SignInPageState extends State<SignInPage> {
 
               SizedBox(height: 180.0, child: Constants().logoAsset),
               SizedBox(height: 20),
-              SizedBox(height: 70.0, child: inputField(Constants().emailPlaceholder)),
-              SizedBox(height: 50.0, child: inputField(Constants().passwordPlaceholder)),
+              SizedBox(height: 70.0, child: CommonUiElements().inputField(Constants().emailPlaceholder)),
+              SizedBox(height: 50.0, child: CommonUiElements().inputField(Constants().passwordPlaceholder)),
 
               Row(children: <Widget>[
                 const Spacer(),
@@ -71,7 +53,11 @@ class _SignInPageState extends State<SignInPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(Constants().createAccountText),
-          TextButton(onPressed: () {}, child: Text(Constants().signUpButtonText))
+          TextButton(onPressed: () {Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SignUpPage()),
+          );
+          }, child: Text(Constants().signUpButtonText))
         ],
       );
   }

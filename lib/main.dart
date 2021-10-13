@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'View/sign_in.dart';
+import "Controller/constants.dart";
 
 void main() => runApp(const MyApp());
 
@@ -12,9 +13,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.indigo,
+        primarySwatch: Constants().themeColor,
         primaryColor: Colors.black,
-        brightness: Brightness.light,
+        brightness: Brightness.dark,
         backgroundColor: const Color(0xFF212121),
         dividerColor: Colors.black12,
       ),
