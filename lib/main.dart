@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'View/sign_in.dart';
+import 'package:ipair/View/Auth/sign_in.dart';
 import "Controller/constants.dart";
+import 'View/Main/Home/home.dart';
 
 void main() => runApp(const MyApp());
 
@@ -15,11 +16,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Constants().themeColor,
         primaryColor: Colors.black,
-        brightness: Brightness.dark,
+        brightness: Brightness.light,
         backgroundColor: const Color(0xFF212121),
         dividerColor: Colors.black12,
       ),
-      home: const SignInPage(),
+      home: const HomePage(),
     );
   }
 }
