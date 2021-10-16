@@ -14,7 +14,7 @@ def login():
     emailReceived = format(request.args.get('email'))
     passwordReceived = format(request.args.get('password'))
 
-    random_var = psycopg2.connect(dbname='CoreDB', user='postgres', host='localhost', password='vinsteradmin123$')
+    random_var = psycopg2.connect(dbname='CoreDB', user='postgres', host='localhost', password='')
     new_var = random_var.cursor()
     new_var.execute(
         "SELECT email, password FROM \"user\" WHERE email=\'{" + emailReceived + "}\' AND password=\'{" + passwordReceived + "}\';")
@@ -39,7 +39,7 @@ def signup():
     emailReceived = "{"+format(request.args.get('email'))+"}"
     passwordReceived = "{"+format(request.args.get('password'))+"}"
 
-    conn = psycopg2.connect(dbname='CoreDB', user='postgres', host='localhost', password='vinsteradmin123$')
+    conn = psycopg2.connect(dbname='CoreDB', user='postgres', host='localhost', password='')
     cur = conn.cursor()
     #conn.autocommit = True
 
