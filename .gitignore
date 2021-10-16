@@ -1,0 +1,13 @@
+# Ignore Mac files
+.DS_store
+
+# API keys
+.env
+
+.idea
+
+.dart_tool
+
+.packages
+
+venv
