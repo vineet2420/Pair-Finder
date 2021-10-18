@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ipair/Controller/auth_controller.dart';
 import '../../Controller/constants.dart';
 import '../common_ui_elements.dart';
 
@@ -55,7 +56,12 @@ class _SignUpPageState extends State<SignUpPage> {
                     SizedBox(
                         height: 100.0,
                         child: CommonUiElements().inputField(Constants().passwordPlaceholder, passwordController)),
-                    IconButton(onPressed: () {}, icon: Icon(Icons.arrow_forward, color: Constants().themeColor), iconSize: 35,),
+                    IconButton(onPressed: ()=>
+                        AuthController().createUser(firstNameController.text,
+                            lastNameFieldController.text, emailController.text,
+                            usernameController.text, passwordController.text,
+                            context), icon: Icon(Icons.arrow_forward,
+                        color: Constants().themeColor), iconSize: 35,),
                     Spacer(),
                   ],
             )),

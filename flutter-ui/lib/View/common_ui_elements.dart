@@ -20,4 +20,44 @@ class CommonUiElements{
     );
   }
 
+  // Display a custom message in a dialog box on the screen
+  // Ex. Error message with invalid credentials to display when logging in
+  void showMessage(String title, String message, String buttonText, BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text(buttonText),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  showMessageWithAction(String title, String message, String buttonText, BuildContext context, Function(Future<dynamic>) action) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text(buttonText),
+              onPressed: () { Navigator.of(context).pop();
+              Navigator.of(context).pop();},
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
