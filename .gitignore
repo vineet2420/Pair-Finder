@@ -11,3 +11,5 @@
 .packages
 
 venv
+
+secret.py

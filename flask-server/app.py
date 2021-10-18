@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, make_response, json
-from saltGen import getSalt
+import secret
 import psycopg2
 import hashlib
 
@@ -10,7 +10,7 @@ def hello_world():
     return "<p>Hello, World!</p>"
 
 def hashText(clearText):
-    salt = getSalt()
+    salt = secret.getSalt()
     clearText = clearText.encode()
 
     # Iterate hash for text 200k times
@@ -24,7 +24,7 @@ def login():
     emailReceived = format(request.args.get('email'))
     passwordReceived = format(request.args.get('password'))
 
-    random_var = psycopg2.connect(dbname='CoreDB', user='postgres', host='localhost', password='vinsteradmin123$')
+    random_var = psycopg2.connect(dbname='CoreDB', user='postgres', host='localhost', password=secret.getDbPass())
     new_var = random_var.cursor()
     new_var.execute(
         "SELECT email, password FROM \"user\" WHERE email=\'{" + emailReceived + "}\' AND password=\'{" + hashText(passwordReceived) + "}\';")
@@ -53,7 +53,7 @@ def signup():
     emailReceived = "{" + format(request.args.get('email')) + "}"
     passwordReceived = format(request.args.get('password'))
 
-    conn = psycopg2.connect(dbname='CoreDB', user='postgres', host='localhost', password='vinsteradmin123$')
+    conn = psycopg2.connect(dbname='CoreDB', user='postgres', host='localhost', password=secret.getDbPass())
     cur = conn.cursor()
     # conn.autocommit = True
 
