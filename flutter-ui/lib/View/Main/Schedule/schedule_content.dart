@@ -5,7 +5,7 @@ class ScheduleContent {
   Widget setupSchedule() {
 
     return const Center(
-      child: Text('Schedule Content')
+        child: Text('Schedule Content')
     );
 
   }

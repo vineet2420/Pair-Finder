@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:ipair/UserFlow/user.dart';
+import 'package:ipair/View/Main/Account/account_content.dart';
 import '../Activity/activity_content.dart';
 import '../Schedule/schedule_content.dart';
 import 'home_content.dart';
@@ -17,13 +19,14 @@ class _HomePageState extends State<HomePage> {
   int indexToSet = 0;
   late List<Widget> widgetPages;
 
-  String tes = '';
+  User user = User(1);
 
-  onTabSelected(int requestedIndex) async{
+  onTabSelected(int requestedIndex) {
 
     setState(() {
       indexToSet = requestedIndex;
     });
+
   }
 
   @override
@@ -32,8 +35,6 @@ class _HomePageState extends State<HomePage> {
       HomeContent().setupHomeContent(),
       ActivityContent().setupActivity(),
       ScheduleContent().setupSchedule()];
-
-
 
 
     return CupertinoPageScaffold(
@@ -45,7 +46,10 @@ class _HomePageState extends State<HomePage> {
           body: widgetPages[indexToSet],
           bottomNavigationBar: bottomNavBar(),
         ),
+
+        
       ),
+
     );
   }
 
@@ -62,7 +66,12 @@ class _HomePageState extends State<HomePage> {
     return Material(
         child: IconButton(
       icon: const Icon(Icons.manage_accounts_outlined),
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(builder: (context) => AccountPage(user)),
+        );
+      },
     ));
   }
 
