@@ -6,9 +6,11 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ipair/Controller/constants.dart';
 import 'package:ipair/UserFlow/user.dart';
+import 'package:ipair/View/Main/Home/home.dart';
 
 class AccountPage extends StatefulWidget {
   final User user;
+
   const AccountPage(User this.user, {Key? key}) : super(key: key);
 
   @override
@@ -16,54 +18,43 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-
   @override
   Widget build(BuildContext context) {
+    User user = widget.user;
     return CupertinoPageScaffold(
         child: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              const CupertinoSliverNavigationBar(
-                largeTitle: AutoSizeText("Account"),
-              )
-            ];
-          },
-          body: Scaffold(
-              body: Column(
-                children: <Widget>[
-                  sectionHeader('General'),
-                  sectionRow('Name', widget.user.getName()),
-                  sectionRow('Email', widget.user.getEmail()),
-                  sectionRow('Username', widget.user.getUsername()),
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return <Widget>[
+          const CupertinoSliverNavigationBar(
+            largeTitle: AutoSizeText("Account"),
+          )
+        ];
+      },
+      body: Scaffold(
+          body: Column(
+        children: <Widget>[
+          sectionHeader('General'),
+          sectionRow('Name', user.getName()),
+          sectionRow('Email', user.getEmail()),
+          sectionRow('Username', user.getUsername()),
 
-                  sectionHeader('Notifications'),
-                  sectionRow('Enable', ''),
-
-
-                  Container(
-                      padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
-                      child:
-                      ElevatedButton(
-
-                          style: ButtonStyle(
-                            minimumSize: MaterialStateProperty.all(
-                                const Size(225, 50)),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50)),
-                            ),
-                          ),
-                          onPressed: () {},
-                          child: Text('Log Out')
-
-                      )
-                  )
-                ],
-              )
-          ),
-        )
-    );
+          sectionHeader('Notifications'),
+          sectionRow('Enable', ''),
+          Container(
+              padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
+              child: ElevatedButton(
+                  style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all(const Size(225, 50)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50)),
+                    ),
+                  ),
+                  onPressed: () {},
+                  child: const Text('Log Out')))
+        ],
+      )),
+    ));
   }
 
   Widget sectionHeader(String title) {
@@ -72,7 +63,7 @@ class _AccountPageState extends State<AccountPage> {
       height: 60,
       child: Card(
         shape:
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
         child: Align(
           alignment: Alignment.centerLeft,
           child: Padding(

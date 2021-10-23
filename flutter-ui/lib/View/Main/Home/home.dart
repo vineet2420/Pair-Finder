@@ -1,15 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:ipair/Controller/constants.dart';
+import 'package:ipair/UserFlow/local_storage.dart';
 import 'package:ipair/UserFlow/user.dart';
 import 'package:ipair/View/Main/Account/account_content.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Activity/activity_content.dart';
 import '../Schedule/schedule_content.dart';
 import 'home_content.dart';
 
 // For the home page UI
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final User user;
+
+  const HomePage(User this.user, {Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _HomePageState();
@@ -18,38 +23,49 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int indexToSet = 0;
   late List<Widget> widgetPages;
+  User user = User();
+  List<String> cachedData = <String>["", "", "", ""];
+  String welcomeTitle = '';
 
-  User user = User(1);
+  Future main() async {
+    user = widget.user;
+    print(user.getName());
+  }
+
+  @protected
+  @mustCallSuper
+  void initState() {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      main();
+    });
+  }
 
   onTabSelected(int requestedIndex) {
-
     setState(() {
       indexToSet = requestedIndex;
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
+
     widgetPages = [
       HomeContent().setupHomeContent(),
       ActivityContent().setupActivity(),
-      ScheduleContent().setupSchedule()];
-
+      ScheduleContent().setupSchedule()
+    ];
 
     return CupertinoPageScaffold(
+
       child: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return navigationController('Welcome, Vinny');
+          return navigationController('Welcome, ${widget.user.getName()}');
         },
         body: Scaffold(
           body: widgetPages[indexToSet],
           bottomNavigationBar: bottomNavBar(),
         ),
-
-        
       ),
-
     );
   }
 
@@ -82,7 +98,8 @@ class _HomePageState extends State<HomePage> {
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
         BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Find'),
-        BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: 'Activities'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today), label: 'Activities'),
       ],
     );
   }

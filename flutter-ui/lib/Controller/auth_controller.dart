@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:ipair/UserFlow/user.dart';
 import '../Model/auth_model.dart';
 import '../View/Main/Home/home.dart';
 import '../View/common_ui_elements.dart';
@@ -7,12 +10,18 @@ import '../View/Auth/login.dart';
 class AuthController {
   void sanitizeAndSendCredentials(
       String email, String password, BuildContext context) async {
-    final int isUser = await Auth().fetchCredentialStatus(email, password);
+    final List isUser = await Auth().fetchCredentialStatus(email, password);
+    String userData = "";
 
-    switch (isUser) {
+    switch (isUser.elementAt(0)) {
       case 200:
+        userData = await isUser.elementAt(1);
+        print("User data: ${userData}");
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const HomePage()));
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    HomePage(User.newLogIn(userData))));
         break;
       case 500:
         CommonUiElements().showMessage("Internal Server Error",

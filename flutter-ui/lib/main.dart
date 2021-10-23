@@ -1,16 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:ipair/UserFlow/local_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import "Controller/constants.dart";
+import 'UserFlow/user.dart';
 import 'View/Auth/login.dart';
 import 'View/Main/Home/home.dart';
 
-void main() => runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  List<String> cachedData = await LocalStorage().getCachedList(Constants().userStorageKey) ?? <String>["","","",""];
 
-  // This widget is the root of your application.
+  // print(cachedData);
+  runApp(MyApp(cachedData));
+}
+
+class MyApp extends StatelessWidget{
+  final List<String> cachedData;
+  const MyApp(List<String> this.cachedData, {Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    print("In build: ${cachedData}");
+    int uid = -1;
+    if (cachedData.elementAt(0).isNotEmpty){
+       uid = int.tryParse(cachedData.elementAt(0))??-1;
+    }
     return MaterialApp(
       title: 'iPair',
       theme: ThemeData(
@@ -20,7 +35,7 @@ class MyApp extends StatelessWidget {
         backgroundColor: const Color(0xFF212121),
         dividerColor: Colors.black12,
       ),
-      home: const SignInPage(),
+      home: uid!=-1?HomePage(User.loadFromCache(cachedData)):const SignInPage(),
     );
   }
 }

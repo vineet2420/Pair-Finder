@@ -17,4 +17,6 @@ class Constants {
 
 
   MaterialColor themeColor = Colors.indigo;
+
+  String userStorageKey = "userStorage";
 }
