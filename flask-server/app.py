@@ -25,7 +25,7 @@ def login():
     passwordReceived = format(request.args.get('password'))
     uid = ""
 
-    random_var = psycopg2.connect(dbname='CoreDB', user='postgres', host='localhost', password=secret.getDbPass())
+    random_var = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
     new_var = random_var.cursor()
     new_var.execute(
         "SELECT * FROM \"user\" WHERE email=\'{" + emailReceived + "}\' AND password=\'{" + hashText(passwordReceived) + "}\';")
@@ -56,7 +56,7 @@ def signup():
     emailReceived = "{" + format(request.args.get('email')) + "}"
     passwordReceived = format(request.args.get('password'))
 
-    conn = psycopg2.connect(dbname='CoreDB', user='postgres', host='localhost', password=secret.getDbPass())
+    conn = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
     cur = conn.cursor()
     # conn.autocommit = True
 
@@ -83,7 +83,7 @@ def getUser():
     uidReceived = request.args.get('uid')
     print(uidReceived)
 
-    conn = psycopg2.connect(dbname='CoreDB', user='postgres', host='localhost', password=secret.getDbPass())
+    conn = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
 
     SQL = "SELECT * FROM \"user\" WHERE uid=%s;"
 
@@ -103,4 +103,5 @@ def getUser():
 
     conn.close()
 
-app.run(debug=True)
+if __name__ == "__main__":
+    app.run()
