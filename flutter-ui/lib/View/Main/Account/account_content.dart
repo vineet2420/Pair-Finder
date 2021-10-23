@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:ipair/Controller/auth_controller.dart';
 import 'package:ipair/Controller/constants.dart';
 import 'package:ipair/UserFlow/user.dart';
 import 'package:ipair/View/Main/Home/home.dart';
@@ -50,7 +51,7 @@ class _AccountPageState extends State<AccountPage> {
                           borderRadius: BorderRadius.circular(50)),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {AuthController().logOut(context);},
                   child: const Text('Log Out')))
         ],
       )),
@@ -77,7 +78,7 @@ class _AccountPageState extends State<AccountPage> {
                 ),
               )),
         ),
-        color: Colors.red.withOpacity(0.5),
+        color: Colors.red.withOpacity(.9),
       ),
     );
   }
@@ -101,7 +102,7 @@ class _AccountPageState extends State<AccountPage> {
             ],
           ),
         ),
-        color: Constants().themeColor.withOpacity(0.5),
+        color: Constants().themeColor.withOpacity(.9),
       ),
     );
   }

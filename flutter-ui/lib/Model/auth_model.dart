@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth{
-  final String loginRoute = "http://localhost:5000/login?";
+  final String loginRoute = "http://ec2-18-212-34-214.compute-1.amazonaws.com:5000/login?";
 
   Future<List> fetchCredentialStatus(String email, String password) async {
     final response;
@@ -19,7 +19,7 @@ class Auth{
     }
   }
 
-  final String signUpRoute = "http://localhost:5000/signup?";
+  final String signUpRoute = "http://ec2-18-212-34-214.compute-1.amazonaws.com:5000/signup?";
 
   Future<bool> fetchCreateUserStatus(String firstName, String lastName, String email, String uname, String password) async {
     final response = await http.post(Uri.parse(signUpRoute+
@@ -31,7 +31,7 @@ class Auth{
   }
 
 
-  final String userDetailsRoute = "http://localhost:5000/getuser?uid=";
+  final String userDetailsRoute = "http://ec2-18-212-34-214.compute-1.amazonaws.com:5000/getuser?uid=";
 
   Future<List> fetchUserDetails(int uid) async {
     try {

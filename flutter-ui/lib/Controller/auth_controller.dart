@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:ipair/UserFlow/local_storage.dart';
 import 'package:ipair/UserFlow/user.dart';
 import '../Model/auth_model.dart';
 import '../View/Main/Home/home.dart';
 import '../View/common_ui_elements.dart';
 import '../View/Auth/login.dart';
+import 'constants.dart';
 
 class AuthController {
   void sanitizeAndSendCredentials(
@@ -54,5 +56,16 @@ class AuthController {
           "Try Again",
           context);
     }
+  }
+
+  void logOut(BuildContext context){
+    // Clear the cache
+    LocalStorage().cacheList(Constants().userStorageKey, <String>["","","",""]);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                const SignInPage()));
+
   }
 }
