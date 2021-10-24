@@ -60,7 +60,7 @@ def signup():
     cur = conn.cursor()
     # conn.autocommit = True
 
-    SQL = "INSERT INTO \"user\" (first_name, last_name, email, username,  password) VALUES (%s, %s, %s, %s);"
+    SQL = "INSERT INTO \"user\" (first_name, last_name, email, username,  password) VALUES (%s, %s, %s, %s, %s);"
 
     data = (fnameReceived, lnameReceived, emailReceived, unameReceived, '{'+hashText(passwordReceived)+'}')
     with conn, conn.cursor() as cur:
