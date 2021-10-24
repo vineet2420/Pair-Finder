@@ -4,7 +4,8 @@ import 'package:ipair/Model/auth_model.dart';
 import 'local_storage.dart';
 
 class User {
-  String firstName = "null", lastName = "null", _email = "null", _username = "null";
+  String
+  firstName = "null", lastName = "null", _email = "null", _username = "null";
   String fullName = "null";
   bool _isOnline = false;
   int uid = -1;
@@ -16,18 +17,21 @@ class User {
     uid = int.tryParse(jsonDecode(data)['uid']) ?? -1;
     firstName = jsonDecode(data)['first_name'];
     lastName = jsonDecode(data)['last_name'];
+    fullName = firstName + " " + lastName;
     _email = jsonDecode(data)['email'];
     _username = jsonDecode(data)['username'];
 
     LocalStorage().cacheList(Constants().userStorageKey,
-        <String>[uid.toString(), firstName, _email, _username]);
+        <String>[uid.toString(), firstName, lastName, fullName, _email, _username]);
   }
 
   User.loadFromCache(List<String> data) {
     uid = int.tryParse(data.elementAt(0)) ?? -1;
     firstName = data.elementAt(1);
-    _email = data.elementAt(2);
-    _username = data.elementAt(3);
+    lastName = data.elementAt(2);
+    fullName = data.elementAt(3);
+    _email = data.elementAt(4);
+    _username = data.elementAt(5);
 
     // Background task - non-ui dependent
     syncWithDB();
@@ -40,14 +44,19 @@ class User {
       List allData = await Auth().fetchUserDetails(uid);
       String userData = allData[1];
 
-      String dbName = jsonDecode(userData)['fullName'];
+      String dbFirstName = jsonDecode(userData)['first_name'];
+      String dbLastName = jsonDecode(userData)['last_name'];
       String dbEmail = jsonDecode(userData)['email'];
       String dbUsername = jsonDecode(userData)['username'];
 
       bool cacheRequired = false;
 
-      if (firstName != dbName){
-        firstName = dbName;
+      if (firstName != dbFirstName){
+        firstName = dbFirstName;
+        cacheRequired = true;
+      }
+      if (lastName != dbLastName){
+        lastName = dbLastName;
         cacheRequired = true;
       }
       if (_email != dbEmail){
@@ -61,7 +70,7 @@ class User {
 
       if (cacheRequired){
         LocalStorage().cacheList(Constants().userStorageKey,
-            <String>[uid.toString(), firstName, _email, _username]);
+            <String>[uid.toString(), firstName, lastName, fullName, _email, _username]);
       }
     }
     on Exception catch (e){
@@ -70,7 +79,8 @@ class User {
     }
   }
 
-  String getName() => firstName;
+  String getFirstName() => firstName;
+  String getFullName() => fullName;
   String getEmail() => _email;
   String getUsername() => _username;
 }

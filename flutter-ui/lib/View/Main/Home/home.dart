@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
 
   Future main() async {
     user = widget.user;
-    print(user.getName());
+    print(user.getFullName());
   }
 
   @protected
@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
 
       child: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return navigationController('Welcome, ${widget.user.getName()}');
+          return navigationController('Welcome, ${widget.user.getFirstName()}');
         },
         body: Scaffold(
           body: widgetPages[indexToSet],

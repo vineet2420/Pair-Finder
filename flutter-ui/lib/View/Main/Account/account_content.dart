@@ -38,7 +38,7 @@ class _AccountPageState extends State<AccountPage> {
         children: <Widget>[
           const SizedBox(height: 20),
           CommonUiElements().sectionHeader('General'),
-          sectionRow('Name', user.getName()),
+          sectionRow('Name', user.getFullName()),
           sectionRow('Email', user.getEmail()),
           sectionRow('Username', user.getUsername()),
           const SizedBox(height: 20),

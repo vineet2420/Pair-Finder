@@ -15,7 +15,7 @@ class HomeContent {
             scrollDirection: Axis.horizontal,
             crossAxisCount: 2,
             children: <Widget>[
-              // TODO refactor this into its own object with more info about destination
+              // TODO After midterm - refactor this into its own object with more info about destination
               Center(child:Text("🍽", style: TextStyle(fontSize: 30))),
               Center(child:Text("🍿", style: TextStyle(fontSize: 30))),
               Center(child:Text("🚵‍♀️", style: TextStyle(fontSize: 30))),
