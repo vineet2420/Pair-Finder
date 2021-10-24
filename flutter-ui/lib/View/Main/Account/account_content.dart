@@ -8,6 +8,7 @@ import 'package:ipair/Controller/auth_controller.dart';
 import 'package:ipair/Controller/constants.dart';
 import 'package:ipair/UserFlow/user.dart';
 import 'package:ipair/View/Main/Home/home.dart';
+import 'package:ipair/View/common_ui_elements.dart';
 
 class AccountPage extends StatefulWidget {
   final User user;
@@ -19,6 +20,8 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
+  bool switchVal = true;
+
   @override
   Widget build(BuildContext context) {
     User user = widget.user;
@@ -34,53 +37,27 @@ class _AccountPageState extends State<AccountPage> {
       body: Scaffold(
           body: Column(
         children: <Widget>[
-          sectionHeader('General'),
+          const SizedBox(height: 20),
+          CommonUiElements().sectionHeader('General'),
           sectionRow('Name', user.getName()),
           sectionRow('Email', user.getEmail()),
           sectionRow('Username', user.getUsername()),
-
-          sectionHeader('Notifications'),
-          sectionRow('Enable', ''),
-          Container(
-              padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
-              child: ElevatedButton(
-                  style: ButtonStyle(
-                    minimumSize: MaterialStateProperty.all(const Size(225, 50)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50)),
-                    ),
-                  ),
-                  onPressed: () {AuthController().logOut(context);},
-                  child: const Text('Log Out')))
+          const SizedBox(height: 20),
+          CommonUiElements().sectionHeader('Notifications'),
+          customWidgetSectionRow('Enable', <Widget>[
+            Switch(
+                onChanged: (bool value) {
+                  setState(() {
+                    switchVal = value;
+                  });
+                },
+                value: switchVal,
+                activeColor: Colors.red)
+          ]),
+          logOutButton()
         ],
       )),
     ));
-  }
-
-  Widget sectionHeader(String title) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(10, 10, 270, 0),
-      height: 60,
-      child: Card(
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-              child: Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                ),
-              )),
-        ),
-        color: Colors.red.withOpacity(.9),
-      ),
-    );
   }
 
   Widget sectionRow(String title, String content) {
@@ -89,6 +66,7 @@ class _AccountPageState extends State<AccountPage> {
       width: double.infinity,
       height: 100,
       child: Card(
+        elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
@@ -102,7 +80,31 @@ class _AccountPageState extends State<AccountPage> {
             ],
           ),
         ),
-        color: Constants().themeColor.withOpacity(.9),
+        color: Constants().themeColor.withOpacity(.8),
+      ),
+      // color: Constants().themeColor.withOpacity(.5),
+    );
+  }
+
+  Widget customWidgetSectionRow(String title, List<Widget> content) {
+    content.insert(0, customRowTitle(title + ": "));
+    return Container(
+      padding: EdgeInsets.all(10),
+      width: double.infinity,
+      height: 100,
+      child: Card(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: content,
+          ),
+        ),
+        color: Constants().themeColor.withOpacity(.8),
       ),
     );
   }
@@ -123,5 +125,22 @@ class _AccountPageState extends State<AccountPage> {
       text,
       style: const TextStyle(color: Colors.white, fontSize: 16),
     );
+  }
+
+  Widget logOutButton() {
+    return Container(
+        padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
+        child: ElevatedButton(
+            style: ButtonStyle(
+              // backgroundColor: MaterialStateProperty.all(Colors.redAccent),
+              minimumSize: MaterialStateProperty.all(const Size(225, 50)),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+              ),
+            ),
+            onPressed: () {
+              AuthController().logOut(context);
+            },
+            child: const Text('Log Out')));
   }
 }

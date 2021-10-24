@@ -83,10 +83,7 @@ class _HomePageState extends State<HomePage> {
         child: IconButton(
       icon: const Icon(Icons.manage_accounts_outlined),
       onPressed: () {
-        Navigator.push(
-          context,
-          CupertinoPageRoute(builder: (context) => AccountPage(user)),
-        );
+    Navigator.pushNamed(context, '/account', arguments: user);
       },
     ));
   }

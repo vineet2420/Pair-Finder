@@ -19,11 +19,9 @@ class AuthController {
       case 200:
         userData = await isUser.elementAt(1);
         print("User data: ${userData}");
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    HomePage(User.newLogIn(userData))));
+        Navigator.pushNamedAndRemoveUntil(
+            context, "/home", (Route<dynamic> route) => false,
+            arguments: User.newLogIn(userData));
         break;
       case 500:
         CommonUiElements().showMessage("Internal Server Error",
@@ -58,14 +56,22 @@ class AuthController {
     }
   }
 
-  void logOut(BuildContext context){
+  void logOut(BuildContext context) {
     // Clear the cache
-    LocalStorage().cacheList(Constants().userStorageKey, <String>["","","",""]);
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                const SignInPage()));
+    LocalStorage()
+        .cacheList(Constants().userStorageKey, <String>["", "", "", ""]);
+    Navigator.pushReplacementNamed(context, "/signin");
+  }
 
+  String? validateTextField(String? value, String fieldName, int minChars) {
+    if (value == null) {
+      return "$fieldName field can't be null.";
+    } else if (value.isEmpty) {
+      return "$fieldName field can't be empty.";
+    } else if (value.length < minChars) {
+      return "$fieldName field is too short.";
+    } else {
+      return null;
+    }
   }
 }

@@ -6,8 +6,8 @@ class Constants {
   Image logoAsset = Image.asset("assets/images/logo.png", fit: BoxFit.fill);
 
   // Auth
-  String emailPlaceholder = "Email:";
-  String passwordPlaceholder = "Password:";
+  String emailPlaceholder = "Email";
+  String passwordPlaceholder = "Password";
 
   String forgotPasswordButtonText = "Forgot Password";
   String signInButtonText = "Sign In";

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ipair/Model/auth_model.dart';
 import '../../Controller/auth_controller.dart';
 import '../../Controller/constants.dart';
 import 'signup.dart';
@@ -14,60 +15,86 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  TextEditingController emailFieldController = TextEditingController();
+  TextEditingController passwordFieldController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController emailFieldController = TextEditingController();
-    TextEditingController passwordFieldController = TextEditingController();
-    TextField emailField, passwordField;
-
     return GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-    child: Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Spacer(),
-
-              SizedBox(height: 160.0, child: Constants().logoAsset),
-              SizedBox(height: 40),
-              SizedBox(height: 70.0, child: emailField = CommonUiElements().inputField(Constants().emailPlaceholder, emailFieldController)),
-              SizedBox(height: 50.0, child: passwordField = CommonUiElements().inputField(Constants().passwordPlaceholder, passwordFieldController)),
-
-              Row(children: <Widget>[
-                const Spacer(),
-                TextButton(onPressed: () {}, child: Text(Constants().forgotPasswordButtonText))
-              ]),
-
-              IconButton(onPressed: () {
-                AuthController().sanitizeAndSendCredentials(emailFieldController.text, passwordFieldController.text, context);
-              }, icon: Icon(Icons.login_outlined, color: Constants().themeColor), iconSize: 35),
-
-              Spacer(),
-              bottomBar(),
-            ],
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Spacer(),
+                SizedBox(height: 160.0, child: Constants().logoAsset),
+                SizedBox(height: 40),
+                loginForm(_formKey, emailFieldController, passwordFieldController),
+                Row(children: <Widget>[
+                  const Spacer(),
+                  TextButton(
+                      onPressed: () {},
+                      child: Text(Constants().forgotPasswordButtonText))
+                ]),
+                IconButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        AuthController().sanitizeAndSendCredentials(
+                            emailFieldController.text,
+                            passwordFieldController.text,
+                            context);
+                      }
+                    },
+                    icon: Icon(Icons.login_outlined,
+                        color: Constants().themeColor),
+                    iconSize: 35),
+                Spacer(),
+                bottomBar(),
+              ],
+            ),
           ),
         ),
       ),
-    ),
     );
   }
 
-  Widget bottomBar(){
-    return
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(Constants().createAccountText),
-          TextButton(onPressed: () {Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SignUpPage()),
-          );
-          }, child: Text(Constants().signUpButtonText))
-        ],
-      );
+  Widget bottomBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(Constants().createAccountText),
+        TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SignUpPage()),
+              );
+            },
+            child: Text(Constants().signUpButtonText))
+      ],
+    );
+  }
+
+  Form loginForm(Key? formKey, TextEditingController emailController,
+      TextEditingController passwordController) {
+    const TextStyle inputFieldStyle = TextStyle(fontSize: 16.0);
+    const EdgeInsets inputFieldMargins = EdgeInsets.fromLTRB(20.0, 0, 20.0, 0);
+
+    return Form(
+        key: formKey,
+        child: Column(children: <Widget>[
+          SizedBox(
+              height: 70.0,
+              child: CommonUiElements().inputField("Email", emailController, 3)),
+          const SizedBox(height: 10),
+      SizedBox(
+          height: 70.0,
+          child: CommonUiElements().inputField("Password", passwordController, 8)),
+        ]));
   }
 }
