@@ -6,7 +6,6 @@ import '../Controller/constants.dart';
 class CommonUiElements {
 
   // Method to return a custom input field to reuse in sign in and sign up pages
-  // Arg: String - placeholder text
   TextFormField inputField(String placeholder, TextEditingController _controller, int minChars) {
     const TextStyle inputFieldStyle = TextStyle(fontSize: 16.0);
     const EdgeInsets inputFieldMargins = EdgeInsets.fromLTRB(20.0, 0, 20.0, 0);

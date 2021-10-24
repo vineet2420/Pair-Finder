@@ -1,12 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:ipair/UserFlow/local_storage.dart';
 import 'package:ipair/UserFlow/user.dart';
 import '../Model/auth_model.dart';
-import '../View/Main/Home/home.dart';
 import '../View/common_ui_elements.dart';
-import '../View/Auth/login.dart';
 import 'constants.dart';
 
 class AuthController {
@@ -36,23 +32,24 @@ class AuthController {
 
   void createUser(String firstName, String lastName, String email,
       String username, String password, BuildContext context) async {
-    final bool createdUser = await Auth()
+    final List createdUser = await Auth()
         .fetchCreateUserStatus(firstName, lastName, email, username, password);
 
-    if (createdUser) {
+    switch (createdUser.elementAt(0)) {
+      case 200:
       CommonUiElements().showMessageWithAction(
           "Success!",
-          "Please check your email to verify your account.",
+          "Please sign in with your credentials.",
           "Okay.",
-          context,
-          (Future) =>
-              Navigator.of(context).popAndPushNamed('../View/Auth/login'));
-    } else {
-      CommonUiElements().showMessage(
-          "Unknown Error",
-          "Could not create user with provided information.",
-          "Try Again",
-          context);
+          context, (Future) => Navigator.of(context).popAndPushNamed('../View/Auth/login'));
+      break;
+      case 500: CommonUiElements().showMessage("Internal Server Error",
+          "Please try again later.", "Okay", context);
+      break;
+      default:
+        CommonUiElements().showMessage("Unknown Error",
+            "Could not create user with provided information.", "Try Again", context);
+        break;
     }
   }
 
@@ -71,6 +68,11 @@ class AuthController {
     } else if (value.length < minChars) {
       return "$fieldName field is too short.";
     } else {
+      if (fieldName == "Email"){
+        if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)){
+          return "Please check email address format.";
+        }
+      }
       return null;
     }
   }

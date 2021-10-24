@@ -7,7 +7,6 @@ import 'package:flutter/widgets.dart';
 import 'package:ipair/Controller/auth_controller.dart';
 import 'package:ipair/Controller/constants.dart';
 import 'package:ipair/UserFlow/user.dart';
-import 'package:ipair/View/Main/Home/home.dart';
 import 'package:ipair/View/common_ui_elements.dart';
 
 class AccountPage extends StatefulWidget {

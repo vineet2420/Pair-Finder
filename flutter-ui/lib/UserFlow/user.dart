@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:ipair/Controller/constants.dart';
 import 'package:ipair/Model/auth_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'local_storage.dart';
 
 class User {
-  String _name = "null", _email = "null", _username = "null";
+  String firstName = "null", lastName = "null", _email = "null", _username = "null";
+  String fullName = "null";
   bool _isOnline = false;
   int uid = -1;
   List<String> cachedData = <String>["", "", "", ""];
@@ -14,17 +14,18 @@ class User {
 
   User.newLogIn(String data) {
     uid = int.tryParse(jsonDecode(data)['uid']) ?? -1;
-    _name = jsonDecode(data)['fullName'];
+    firstName = jsonDecode(data)['first_name'];
+    lastName = jsonDecode(data)['last_name'];
     _email = jsonDecode(data)['email'];
     _username = jsonDecode(data)['username'];
 
     LocalStorage().cacheList(Constants().userStorageKey,
-        <String>[uid.toString(), _name, _email, _username]);
+        <String>[uid.toString(), firstName, _email, _username]);
   }
 
   User.loadFromCache(List<String> data) {
     uid = int.tryParse(data.elementAt(0)) ?? -1;
-    _name = data.elementAt(1);
+    firstName = data.elementAt(1);
     _email = data.elementAt(2);
     _username = data.elementAt(3);
 
@@ -35,35 +36,41 @@ class User {
   Future syncWithDB() async {
     print("in cache");
     // Controller method
-    List allData = await Auth().fetchUserDetails(uid);
-    String userData = allData[1];
+    try{
+      List allData = await Auth().fetchUserDetails(uid);
+      String userData = allData[1];
 
-    String dbName = jsonDecode(userData)['fullName'];
-    String dbEmail = jsonDecode(userData)['email'];
-    String dbUsername = jsonDecode(userData)['username'];
+      String dbName = jsonDecode(userData)['fullName'];
+      String dbEmail = jsonDecode(userData)['email'];
+      String dbUsername = jsonDecode(userData)['username'];
 
-    bool cacheRequired = false;
+      bool cacheRequired = false;
 
-    if (_name != dbName){
-      _name = dbName;
-      cacheRequired = true;
+      if (firstName != dbName){
+        firstName = dbName;
+        cacheRequired = true;
+      }
+      if (_email != dbEmail){
+        _email = dbEmail;
+        cacheRequired = true;
+      }
+      if (_username != dbUsername){
+        _username = dbUsername;
+        cacheRequired = true;
+      }
+
+      if (cacheRequired){
+        LocalStorage().cacheList(Constants().userStorageKey,
+            <String>[uid.toString(), firstName, _email, _username]);
+      }
     }
-    if (_email != dbEmail){
-      _email = dbEmail;
-      cacheRequired = true;
-    }
-    if (_username != dbUsername){
-      _username = dbUsername;
-      cacheRequired = true;
-    }
-
-    if (cacheRequired){
-      LocalStorage().cacheList(Constants().userStorageKey,
-          <String>[uid.toString(), _name, _email, _username]);
+    on Exception catch (e){
+      print("Server error - tried validating an already authenticated/signed in user"
+          " with the db for any changes but could not connect to the server. \n $e");
     }
   }
 
-  String getName() => _name;
+  String getName() => firstName;
   String getEmail() => _email;
   String getUsername() => _username;
 }

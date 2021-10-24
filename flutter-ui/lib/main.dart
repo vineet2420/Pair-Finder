@@ -45,22 +45,27 @@ class MyApp extends StatelessWidget {
           final arguments = settings.arguments;
           switch (settings.name) {
             case '/':
-              return MaterialPageRoute(builder: (context) => uid != -1
-                  ? HomePage(User.loadFromCache(cachedData))
-                  : const SignInPage());
+              return MaterialPageRoute(
+                  builder: (context) => uid != -1
+                      ? HomePage(User.loadFromCache(cachedData))
+                      : const SignInPage());
             case '/signin':
-              return MaterialPageRoute(builder: (context) => const SignInPage());
+              return MaterialPageRoute(
+                  builder: (context) => const SignInPage());
             case '/home':
-              if (arguments is User){
-                return MaterialPageRoute(builder: (context) => HomePage(arguments));
+              if (arguments is User) {
+                return MaterialPageRoute(
+                    builder: (context) => HomePage(arguments));
               }
-                    return MaterialPageRoute(builder: (context) => const SignInPage());
-
+              return MaterialPageRoute(
+                  builder: (context) => const SignInPage());
             case '/account':
-              if (arguments is User){
-                return MaterialPageRoute(builder: (context) => AccountPage(arguments));
+              if (arguments is User) {
+                return MaterialPageRoute(
+                    builder: (context) => AccountPage(arguments));
               }
-            return MaterialPageRoute(builder: (context) => const SignInPage());
+              return MaterialPageRoute(
+                  builder: (context) => const SignInPage());
           }
         });
   }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ipair/Controller/constants.dart';
 import 'package:ipair/View/common_ui_elements.dart';
 
 class HomeContent {
@@ -16,7 +15,7 @@ class HomeContent {
             scrollDirection: Axis.horizontal,
             crossAxisCount: 2,
             children: <Widget>[
-              // TODO refactor this into its own objects
+              // TODO refactor this into its own object with more info about destination
               Center(child:Text("🍽", style: TextStyle(fontSize: 30))),
               Center(child:Text("🍿", style: TextStyle(fontSize: 30))),
               Center(child:Text("🚵‍♀️", style: TextStyle(fontSize: 30))),

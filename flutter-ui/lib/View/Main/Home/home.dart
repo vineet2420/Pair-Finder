@@ -1,11 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:ipair/Controller/constants.dart';
-import 'package:ipair/UserFlow/local_storage.dart';
 import 'package:ipair/UserFlow/user.dart';
-import 'package:ipair/View/Main/Account/account_content.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../Activity/activity_content.dart';
 import '../Schedule/schedule_content.dart';
 import 'home_content.dart';

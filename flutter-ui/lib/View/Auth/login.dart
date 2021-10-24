@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ipair/Model/auth_model.dart';
 import '../../Controller/auth_controller.dart';
 import '../../Controller/constants.dart';
 import 'signup.dart';

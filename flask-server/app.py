@@ -35,9 +35,8 @@ def login():
         dbEmail = str(data[2][0])
         dbPassword = str(data[4][0])
         if (dbEmail == emailReceived and dbPassword == hashText(passwordReceived)):
-
-            return make_response('{"uid":"' + str(data[0]) + '", "fullName":"' + data[1][0] + '", "email":"' + data[2][0] + '", "username":"' + data[3][0] + '"}'
-, 200)
+            userData = '{"uid":"' + str(data[0]) + '", "first_name":"' + data[1][0] + '", "last_name":"' + data[2][0] + '", "email":"' + data[3][0]+ '", "username":"' + data[4][0] + '"}'
+            return make_response(userData, 200)
 
     except Exception as e:
         return make_response('{"UserExists": "false"}', 404)
@@ -52,17 +51,18 @@ def signup():
         return make_response('{"Bad Request": "Check URL"}', 400)
 
     fnameReceived = "{" + format(request.args.get('fname')) + "}"
-    unameReceived = "{" + format(request.args.get('uname')) + "}"
+    lnameReceived = "{" + format(request.args.get('lname')) + "}"
     emailReceived = "{" + format(request.args.get('email')) + "}"
+    unameReceived = "{" + format(request.args.get('uname')) + "}"
     passwordReceived = format(request.args.get('password'))
 
     conn = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
     cur = conn.cursor()
     # conn.autocommit = True
 
-    SQL = "INSERT INTO \"user\" (full_name, email, username,  password) VALUES (%s, %s, %s, %s);"
+    SQL = "INSERT INTO \"user\" (first_name, last_name, email, username,  password) VALUES (%s, %s, %s, %s);"
 
-    data = (fnameReceived, emailReceived, unameReceived, '{'+hashText(passwordReceived)+'}')
+    data = (fnameReceived, lnameReceived, emailReceived, unameReceived, '{'+hashText(passwordReceived)+'}')
     with conn, conn.cursor() as cur:
         cur.execute(SQL, data)
 
@@ -95,7 +95,7 @@ def getUser():
     try:
         if str(cursor.statusmessage) is not "None":
             data = cursor.fetchone()
-            userData = '{"uid":"' + str(data[0]) + '", "fullName":"' + data[1][0] + '", "email":"' + data[2][0] + '", "username":"' + data[3][0] + '"}'
+            userData = '{"uid":"' + str(data[0]) + '", "first_name":"' + data[1][0] + '", "last_name":"' + data[2][0] + '", "email":"' + data[3][0]+ '", "username":"' + data[4][0] + '"}'
 
             return make_response(userData, 200)
     except Exception as e:
