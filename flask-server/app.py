@@ -30,11 +30,12 @@ def login():
     new_var.execute(
         "SELECT * FROM \"user\" WHERE email=\'{" + emailReceived + "}\' AND password=\'{" + hashText(passwordReceived) + "}\';")
     data = new_var.fetchone()
-
+    # print(data)
     try:
-        dbEmail = str(data[2][0])
-        dbPassword = str(data[4][0])
+        dbEmail = str(data[3][0])
+        dbPassword = str(data[5][0])
         if (dbEmail == emailReceived and dbPassword == hashText(passwordReceived)):
+            # print(data)
             userData = '{"uid":"' + str(data[0]) + '", "first_name":"' + data[1][0] + '", "last_name":"' + data[2][0] + '", "email":"' + data[3][0]+ '", "username":"' + data[4][0] + '"}'
             return make_response(userData, 200)
 
