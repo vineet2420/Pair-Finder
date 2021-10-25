@@ -61,19 +61,23 @@ def signup():
     cur = conn.cursor()
     # conn.autocommit = True
 
-    emailQuery = "SELECT * FROM \"user\" WHERE email=\'{" + emailReceived + "}\'"
+    emailQuery = "SELECT * FROM \"user\" WHERE email=\'"+emailReceived+"\';"
 
-    with conn, conn.cursor() as cur:
-        cur.execute(emailQuery)
-        if cur.statusmessage is not None and str(cur.statusmessage) != "None":
-            return make_response('{"UserEmailAlreadyExists": "true"}', 409)
+    # print(emailReceived)
 
-    usernameQuery = "SELECT * FROM \"user\" WHERE username=\'{" + unameReceived + "}\'"
+    cur.execute(emailQuery)
+    sameEmailsList = cur.fetchall()
+    # print(sameEmailsList)
+    if sameEmailsList is not None and len(sameEmailsList)>0:
+        return make_response('{"UserEmailAlreadyExists": "true"}', 409)
 
-    with conn, conn.cursor() as cur:
-        cur.execute(usernameQuery)
-        if cur.statusmessage is not None and str(cur.statusmessage) != "None":
-            return make_response('{"UsernameAlreadyExists": "true"}', 410)
+    usernameQuery = "SELECT * FROM \"user\" WHERE username=\'" + unameReceived + "\';"
+
+    cur.execute(usernameQuery)
+    sameUsernamesList = cur.fetchall()
+    # print(sameUsernamesList)
+    if sameUsernamesList is not None and len(sameUsernamesList)>0:
+        return make_response('{"UsernameAlreadyExists": "true"}', 410)
 
     signUpInsert = "INSERT INTO \"user\" (first_name, last_name, email, username,  password) VALUES (%s, %s, %s, %s, %s);"
 
