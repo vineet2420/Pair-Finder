@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, make_response, json
+from flask import Flask, request, make_response
 import secret
 import psycopg2
 import hashlib
@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello_world():
-    return "<p>Hello, World!</p>"
+    return "<p>Server is up!</p>"
 
 def hashText(clearText):
     salt = secret.getSalt()
@@ -25,11 +25,11 @@ def login():
     passwordReceived = format(request.args.get('password'))
     uid = ""
 
-    random_var = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
-    new_var = random_var.cursor()
-    new_var.execute(
+    conn = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
+    cursor = conn.cursor()
+    cursor.execute(
         "SELECT * FROM \"user\" WHERE email=\'{" + emailReceived + "}\' AND password=\'{" + hashText(passwordReceived) + "}\';")
-    data = new_var.fetchone()
+    data = cursor.fetchone()
     # print(data)
     try:
         dbEmail = str(data[3][0])
@@ -42,7 +42,7 @@ def login():
     except Exception as e:
         return make_response('{"UserExists": "false"}', 404)
 
-    random_var.close()
+    conn.close()
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -61,13 +61,27 @@ def signup():
     cur = conn.cursor()
     # conn.autocommit = True
 
-    SQL = "INSERT INTO \"user\" (first_name, last_name, email, username,  password) VALUES (%s, %s, %s, %s, %s);"
+    emailQuery = "SELECT * FROM \"user\" WHERE email=\'{" + emailReceived + "}\'"
+
+    with conn, conn.cursor() as cur:
+        cur.execute(emailQuery)
+        if cur.statusmessage is not None and str(cur.statusmessage) != "None":
+            return make_response('{"UserEmailAlreadyExists": "true"}', 409)
+
+    usernameQuery = "SELECT * FROM \"user\" WHERE username=\'{" + unameReceived + "}\'"
+
+    with conn, conn.cursor() as cur:
+        cur.execute(usernameQuery)
+        if cur.statusmessage is not None and str(cur.statusmessage) != "None":
+            return make_response('{"UsernameAlreadyExists": "true"}', 410)
+
+    signUpInsert = "INSERT INTO \"user\" (first_name, last_name, email, username,  password) VALUES (%s, %s, %s, %s, %s);"
 
     data = (fnameReceived, lnameReceived, emailReceived, unameReceived, '{'+hashText(passwordReceived)+'}')
     with conn, conn.cursor() as cur:
-        cur.execute(SQL, data)
+        cur.execute(signUpInsert, data)
 
-    print(cur.statusmessage)
+    # print(cur.statusmessage)
     conn.close()
     try:
         if str(cur.statusmessage) == "INSERT 0 1":

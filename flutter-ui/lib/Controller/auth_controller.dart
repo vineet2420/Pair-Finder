@@ -43,6 +43,15 @@ class AuthController {
           "Okay.",
           context, (Future) => Navigator.of(context).popAndPushNamed('../View/Auth/login'));
       break;
+      case 409:
+        CommonUiElements().showMessageWithAction("Account Exists",
+            "Your account was found, please proceed to sign in.", "Okay 🤔",
+            context, (Future) => Navigator.of(context).popAndPushNamed('../View/Auth/login'));
+        break;
+      case 410:
+        CommonUiElements().showMessage("Username Exists",
+            "Please choose another username.", "Okay", context);
+        break;
       case 500: CommonUiElements().showMessage("Internal Server Error",
           "Please try again later.", "Okay", context);
       break;
