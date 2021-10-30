@@ -21,7 +21,6 @@ class _HomePageState extends State<HomePage> {
   late List<Widget> widgetPages;
   User user = User();
   List<String> cachedData = <String>["", "", "", ""];
-  String welcomeTitle = '';
 
   Future main() async {
     user = widget.user;
