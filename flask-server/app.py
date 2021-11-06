@@ -1,17 +1,29 @@
 #!/usr/bin/python3
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, render_template
 import secret
 import psycopg2
 import hashlib
 import sys
+from flask_socketio import SocketIO, emit, send
 
 app = Flask(__name__)
+
+socket = SocketIO(app, cors_allowed_origins="*")
 
 sys.path.append('/home/ubuntu/flaskenv/pair-finder/flask-server/venv/lib/python3.6/site-packages/')
 
 @app.route("/")
 def hello_world():
     return "<p>Server is up!</p>"
+
+@socket.on('connected')
+def handle_id(data):
+    print(data)
+
+@socket.on('message')
+def handle_message(data):
+    print('received message: ' + data)
+    send("All Received From Server", broadcast=True, namespace="")
 
 def hashText(clearText):
     salt = secret.getSalt()
@@ -24,6 +36,7 @@ def hashText(clearText):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    handle_message("data")
     if request.args.get('email') is None or request.args.get('password') is None:
         return make_response('{"Bad Request": "Check URL"}', 400)
     emailReceived = format(request.args.get('email'))
@@ -132,4 +145,4 @@ def getUser():
     conn.close()
 
 if __name__ == "__main__":
-    app.run()
+    socket.run(app, debug=True)
