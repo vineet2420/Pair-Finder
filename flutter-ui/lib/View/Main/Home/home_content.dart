@@ -1,43 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:ipair/Controller/activity_controller.dart';
 import 'package:ipair/View/common_ui_elements.dart';
 
-class HomeContent {
+class HomeContent extends StatefulWidget {
+  const HomeContent({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<HomeContent> {
+
+  @override
+  Widget build(BuildContext context) => setupHomeContent();
+
   Widget setupHomeContent() {
     return Column(
       children: <Widget>[
-        SizedBox(height:20),
-      Container(
-        //color: Colors.red,
-        height: 150,
-      width:double.infinity,
-      child:
-        GridView.count(
-            scrollDirection: Axis.horizontal,
-            crossAxisCount: 2,
-            children: <Widget>[
-              // TODO After midterm - refactor this into its own object with more info about destination
-              Center(child:Text("🍽", style: TextStyle(fontSize: 30))),
-              Center(child:Text("🍿", style: TextStyle(fontSize: 30))),
-              Center(child:Text("🚵‍♀️", style: TextStyle(fontSize: 30))),
-              Center(child:Text("📚", style: TextStyle(fontSize: 30))),
-              Center(child:Text("🗺", style: TextStyle(fontSize: 30))),
-              Center(child:Text("🧑‍🍳", style: TextStyle(fontSize: 30))),
-              Center(child:Text("👩‍🌾", style: TextStyle(fontSize: 30))),
-              Center(child:Text("🎨", style: TextStyle(fontSize: 30))),
-              Center(child:Text("🎭", style: TextStyle(fontSize: 30))),
-              Center(child:Text("🎤", style: TextStyle(fontSize: 30))),
-              Center(child:Text("🧑‍💻", style: TextStyle(fontSize: 30))),
-              Center(child:Text("🕺", style: TextStyle(fontSize: 30))),
-              Center(child:Text("🎮", style: TextStyle(fontSize: 30))),
-              Center(child:Text("♛", style: TextStyle(fontSize: 30))),
-              Center(child:Text("🛍", style: TextStyle(fontSize: 30))),
-              Center(child:Text("🚙", style: TextStyle(fontSize: 30))),
-              Center(child:Text("🍻", style: TextStyle(fontSize: 30))),
-              Center(child:Text("🛥", style: TextStyle(fontSize: 30))),
-            ]
-        )
-      ),
-        SizedBox(height:20),
+        SizedBox(height: 20),
+        //ActivityModel().socketOutput(),
+        SizedBox(height: 20),
+        Container(
+            //color: Colors.red,
+            height: 150,
+            width: double.infinity,
+            child: GridView.count(
+                scrollDirection: Axis.horizontal,
+                crossAxisCount: 2,
+                children: <Widget>[
+                  // TODO After midterm - refactor this into its own object with more info about destination
+                  Center(child: Text("🍽", style: TextStyle(fontSize: 30))),
+                  Center(child: Text("🍿", style: TextStyle(fontSize: 30))),
+                  Center(child: Text("🚵‍♀️", style: TextStyle(fontSize: 30))),
+                  Center(child: Text("📚", style: TextStyle(fontSize: 30))),
+                  Center(child: Text("🗺", style: TextStyle(fontSize: 30))),
+                  Center(child: Text("🧑‍🍳", style: TextStyle(fontSize: 30))),
+                  Center(child: Text("👩‍🌾", style: TextStyle(fontSize: 30))),
+                  Center(child: Text("🎨", style: TextStyle(fontSize: 30))),
+                  Center(child: Text("🎭", style: TextStyle(fontSize: 30))),
+                  Center(child: Text("🎤", style: TextStyle(fontSize: 30))),
+                  Center(child: Text("🧑‍💻", style: TextStyle(fontSize: 30))),
+                  Center(child: Text("🕺", style: TextStyle(fontSize: 30))),
+                  Center(child: Text("🎮", style: TextStyle(fontSize: 30))),
+                  Center(child: Text("♛", style: TextStyle(fontSize: 30))),
+                  Center(child: Text("🛍", style: TextStyle(fontSize: 30))),
+                  Center(child: Text("🚙", style: TextStyle(fontSize: 30))),
+                  Center(child: Text("🍻", style: TextStyle(fontSize: 30))),
+                  Center(child: Text("🛥", style: TextStyle(fontSize: 30))),
+                ])),
+        SizedBox(height: 20),
         sectionRow("🍴", "Dining"),
         sectionRow("🗺", "Explore"),
         sectionRow("❓", "Random"),
