@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:ipair/Controller/activity_controller.dart';
 import 'package:ipair/UserFlow/user.dart';
 import '../Activity/activity_content.dart';
 import '../Schedule/schedule_content.dart';
@@ -16,7 +17,7 @@ class HomePage extends StatefulWidget {
   State<StatefulWidget> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   int indexToSet = 0;
   late List<Widget> widgetPages;
   User user = User();
@@ -30,9 +31,16 @@ class _HomePageState extends State<HomePage> {
   @protected
   @mustCallSuper
   void initState() {
+    // Display new activities in real time
+    ActivityController().displayNewActivity(context);
+
+    // Call after frame is rendered
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       main();
     });
+
+    // Detected device state changes such as foreground
+    WidgetsBinding.instance!.addObserver(this);
   }
 
   onTabSelected(int requestedIndex) {
@@ -43,18 +51,20 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     widgetPages = [
-      HomeContent().setupHomeContent(),
-      ActivityContent().setupActivity(),
+      HomeContent(),
+      ActivityContent(),
       ScheduleContent().setupSchedule()
     ];
 
     return CupertinoPageScaffold(
-
       child: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return navigationController('Welcome, ${widget.user.getFirstName()}');
+          return navigationController(indexToSet == 0
+              ? 'Welcome, ${widget.user.getFirstName()}'
+              : indexToSet == 1
+                  ? "Create Activity"
+                  : "My Activities");
         },
         body: Scaffold(
           body: widgetPages[indexToSet],
@@ -68,7 +78,7 @@ class _HomePageState extends State<HomePage> {
     return <Widget>[
       CupertinoSliverNavigationBar(
         largeTitle: AutoSizeText(navBarText),
-        trailing: accountSettings(),
+        trailing: indexToSet == 0 ? accountSettings() : null,
       )
     ];
   }
@@ -78,7 +88,7 @@ class _HomePageState extends State<HomePage> {
         child: IconButton(
       icon: const Icon(Icons.manage_accounts_outlined),
       onPressed: () {
-    Navigator.pushNamed(context, '/account', arguments: user);
+        Navigator.pushNamed(context, '/account', arguments: user);
       },
     ));
   }
@@ -89,10 +99,33 @@ class _HomePageState extends State<HomePage> {
       onTap: onTabSelected,
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Find'),
+        BottomNavigationBarItem(icon: Icon(Icons.create), label: 'Create'),
         BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today), label: 'Activities'),
       ],
     );
   }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        print("Back");
+        break;
+      case AppLifecycleState.inactive:
+        print("Inactive");
+        break;
+      case AppLifecycleState.paused:
+        print("Paused");
+        break;
+      case AppLifecycleState.detached:
+        print("Detached");
+        ActivityController().disconnectSocket();
+        break;
+      default:
+        print("Here");
+        break;
+    }
+  }
+
 }
