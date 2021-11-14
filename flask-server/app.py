@@ -18,4 +18,4 @@ from activity import *
 if __name__ == "__main__":
     #eventlet.wsgi.server(eventlet.listen(('', 5000)), app)
     #app.run(debug=True, port=8000)
-    socket.run(app, debug=True, host='0.0.0.0', port=5000)
+    socket.run(app, debug=True, host='0.0.0.0')
