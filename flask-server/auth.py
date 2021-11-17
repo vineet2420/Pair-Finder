@@ -6,7 +6,6 @@ from flask import request, make_response
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    activity.handle_message(str(request.args.get('email')))
     if request.args.get('email') is None or request.args.get('password') is None:
         return make_response('{"Bad Request": "Check URL"}', 400)
     emailReceived = format(request.args.get('email'))
