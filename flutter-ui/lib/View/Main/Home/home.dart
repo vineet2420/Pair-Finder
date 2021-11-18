@@ -31,8 +31,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @protected
   @mustCallSuper
   void initState() {
+
     // Display new activities in real time
-    ActivityController().displayNewActivity(context);
+    ActivityController().displayNewActivity(context, widget.user);
 
     // Call after frame is rendered
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -53,7 +54,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     widgetPages = [
       HomeContent(),
-      ActivityContent(),
+      ActivityContent(widget.user),
       ScheduleContent().setupSchedule()
     ];
 
@@ -77,6 +78,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   List<Widget> navigationController(String navBarText) {
     return <Widget>[
       CupertinoSliverNavigationBar(
+        automaticallyImplyLeading: false,
         largeTitle: AutoSizeText(navBarText),
         trailing: indexToSet == 0 ? accountSettings() : null,
       )
@@ -127,5 +129,4 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         break;
     }
   }
-
 }

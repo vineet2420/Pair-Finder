@@ -39,6 +39,9 @@ dependencies:
   shared_preferences: ^2.0.8
   socket_io_client: ^1.0.1
   rxdart: ^0.27.2
+  google_maps_flutter: ^2.1.0
+  google_maps_flutter_web: ^0.3.2
+  geocoding: ^2.0.1
 
 dev_dependencies:
   flutter_test:

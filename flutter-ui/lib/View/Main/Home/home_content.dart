@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ipair/Controller/activity_controller.dart';
 import 'package:ipair/View/common_ui_elements.dart';
 
 class HomeContent extends StatefulWidget {

@@ -81,8 +81,6 @@ class _SignInPageState extends State<SignInPage> {
 
   Form loginForm(Key? formKey, TextEditingController emailController,
       TextEditingController passwordController) {
-    const TextStyle inputFieldStyle = TextStyle(fontSize: 16.0);
-    const EdgeInsets inputFieldMargins = EdgeInsets.fromLTRB(20.0, 0, 20.0, 0);
 
     return Form(
         key: formKey,

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:ipair/Controller/constants.dart';
 import 'package:ipair/Model/activity_model.dart';
 import 'package:ipair/Model/auth_model.dart';

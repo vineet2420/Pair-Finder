@@ -1,18 +1,44 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Activity{
+  String owner = "null";
 
   String _activity_name = "null";
+  get activityName => _activity_name;
+
   String _activity_description = "null";
+  get activityDescription => _activity_description;
 
   double _latitude = 0.0;
-  double _longitude = 0.0;
+  get activityLatitude => _latitude;
 
-  DateTime _timestamp = DateTime.now().toUtc();
+  double _longitude = 0.0;
+  get activityLongitude => _longitude;
+
+  int _timestamp = 0;
+  get activityTimestamp => _timestamp;
+
   String _pairID = "null";
 
-  Activity(this._activity_name, this._activity_description, this._latitude, this._longitude);
+  set pairID(String pair) => _pairID = pair;
+
+  // New activity
+  Activity(this.owner, this._activity_name, this._activity_description, LatLng markerPosition){
+    _latitude = markerPosition.latitude;
+    _longitude = markerPosition.longitude;
+    _timestamp = DateTime.now().millisecondsSinceEpoch;
+    _pairID = "-1";
+  }
+
+  @override
+  toString() {
+    return "Name: $_activity_name, Desc: $_activity_description";
+  }
 
   Activity.getActivity(String data){
 
   }
+
+
+
 }
