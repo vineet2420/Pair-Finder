@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../Controller/auth_controller.dart';
 import '../../Controller/constants.dart';
 import 'signup.dart';
-import '../common_ui_elements.dart';
+import '../Common/common_ui_elements.dart';
 
 // For the home page authentication UI
 class SignInPage extends StatefulWidget {

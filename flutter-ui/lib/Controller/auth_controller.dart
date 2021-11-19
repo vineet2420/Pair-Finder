@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ipair/UserFlow/local_storage.dart';
 import 'package:ipair/UserFlow/user.dart';
 import '../Model/auth_model.dart';
-import '../View/common_ui_elements.dart';
+import '../View/Common/common_ui_elements.dart';
 import 'constants.dart';
 
 class AuthController {

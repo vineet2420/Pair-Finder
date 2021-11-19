@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ipair/Controller/auth_controller.dart';
 import '../../Controller/constants.dart';
-import '../common_ui_elements.dart';
+import '../Common/common_ui_elements.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);

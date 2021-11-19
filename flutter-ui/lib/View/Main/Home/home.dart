@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     widgetPages = [
       HomeContent(),
       ActivityContent(widget.user),
-      ScheduleContent().setupSchedule()
+      ScheduleContent()
     ];
 
     return CupertinoPageScaffold(

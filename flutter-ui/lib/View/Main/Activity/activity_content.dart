@@ -164,7 +164,7 @@ class _ActivityContentState extends State<ActivityContent>
             IconButton(
                 onPressed: () {
                   setState(() {
-                    Activity newActivity = Activity(widget.user.uid.toString(), nameFieldController.text, descFieldController.text, marker[0].position);
+                    Activity newActivity = Activity(widget.user.uid.toString(), nameFieldController.text, descFieldController.text, marker[0].position, searchFieldController.text);
                     ActivityController().createActivity(newActivity, context, widget.user);
                   });
                 },

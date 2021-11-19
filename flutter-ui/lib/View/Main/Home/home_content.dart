@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ipair/View/common_ui_elements.dart';
+import 'package:ipair/View/Common/common_activity_elements.dart';
+import 'package:ipair/View/Main/Schedule/schedule_content.dart';
+import 'package:ipair/View/Common/common_ui_elements.dart';
 
 class HomeContent extends StatefulWidget {
   const HomeContent({Key? key}) : super(key: key);
@@ -14,7 +16,8 @@ class _HomeContentState extends State<HomeContent> {
   Widget build(BuildContext context) => setupHomeContent();
 
   Widget setupHomeContent() {
-    return Column(
+    return SingleChildScrollView(
+        child: Column(
       children: <Widget>[
         SizedBox(height: 20),
         //ActivityModel().socketOutput(),
@@ -52,9 +55,10 @@ class _HomeContentState extends State<HomeContent> {
         sectionRow("🗺", "Explore"),
         sectionRow("❓", "Random"),
         SizedBox(height: 30),
-        CommonUiElements().sectionHeader('Nearby Activities: ')
+        CommonUiElements().sectionHeader('Nearby Activities: '),
+        CommonActivityElements().displayAllActivities(context)
       ],
-    );
+    ));
   }
 
   Widget sectionRow(String emoji, String title) {

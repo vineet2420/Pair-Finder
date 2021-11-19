@@ -15,15 +15,17 @@ class Activity{
   double _longitude = 0.0;
   get activityLongitude => _longitude;
 
+  String _location = "null";
+  get activityLocation => _location;
+
   int _timestamp = 0;
   get activityTimestamp => _timestamp;
 
   String _pairID = "null";
-
   set pairID(String pair) => _pairID = pair;
 
   // New activity
-  Activity(this.owner, this._activity_name, this._activity_description, LatLng markerPosition){
+  Activity(this.owner, this._activity_name, this._activity_description, LatLng markerPosition, this._location){
     _latitude = markerPosition.latitude;
     _longitude = markerPosition.longitude;
     _timestamp = DateTime.now().millisecondsSinceEpoch;

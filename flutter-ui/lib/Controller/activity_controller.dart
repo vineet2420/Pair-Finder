@@ -6,7 +6,7 @@ import 'package:ipair/Model/activity_model.dart';
 import 'package:ipair/UserFlow/local_storage.dart';
 import 'package:ipair/UserFlow/user.dart';
 import 'package:ipair/View/Main/Home/home.dart';
-import 'package:ipair/View/common_ui_elements.dart';
+import 'package:ipair/View/Common/common_ui_elements.dart';
 import 'constants.dart';
 
 class ActivityController {
