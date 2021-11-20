@@ -2,8 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:ipair/ActivityFlow/activity.dart';
+import 'package:ipair/ActivityFlow/activity_handler.dart';
 import 'package:ipair/Controller/activity_controller.dart';
+import 'package:ipair/Model/activity_model.dart';
 import 'package:ipair/UserFlow/user.dart';
+import 'package:ipair/View/Common/common_ui_elements.dart';
 import '../Activity/activity_content.dart';
 import '../Schedule/schedule_content.dart';
 import 'home_content.dart';
@@ -11,7 +15,6 @@ import 'home_content.dart';
 // For the home page UI
 class HomePage extends StatefulWidget {
   final User user;
-
   const HomePage(User this.user, {Key? key}) : super(key: key);
 
   @override
@@ -36,7 +39,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @mustCallSuper
   void initState() {
     // Display new activities in real time
-    ActivityController().displayNewActivity(context, widget.user);
+    displayNewActivity(context, widget.user);
 
     // Call after frame is rendered
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -57,7 +60,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     widgetPages = [
       HomeContent(),
-      ActivityContent(widget.user),
+      ActivityContent(user),
       ScheduleContent()
     ];
 
@@ -118,10 +121,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       user.longitude = pos.longitude;
 
       print(user.latitude);
+
       if (displayedPermissionDenied) {
         Navigator.of(context).pop();
         displayedPermissionDenied = false;
       }
+
+        ActivityHandler().nearByActivities = await ActivityController().fetchActivities(user, context);
+
+    setState((){
+      HomeContent();
+    });
+
     }
     catch (e){
       if (!displayedPermissionDenied){
@@ -156,4 +167,24 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         break;
     }
   }
+
+  displayNewActivity(BuildContext context, User currentUser) async {
+    int c = 0;
+    print("called");
+    ActivityController().getActivitySocket().on('message', (data) {
+
+      List<Activity> newSingleActivity = ActivityController().convertJsonToActivity(data, 'ActivityCreated', currentUser);
+      if (newSingleActivity.isNotEmpty){
+        ActivityHandler().nearByActivities.add(newSingleActivity[0]);
+        CommonUiElements().showMessage("New Event Found!", newSingleActivity[0].activityName, "Okay", context);
+        setState((){
+          HomeContent();
+        });
+      }
+      print(data);
+    });
+  }
+
+
+
 }

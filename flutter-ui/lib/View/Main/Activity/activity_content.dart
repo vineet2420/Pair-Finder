@@ -25,8 +25,6 @@ class _ActivityContentState extends State<ActivityContent>
   TextEditingController descFieldController = TextEditingController();
   TextEditingController searchFieldController = TextEditingController();
 
-  // Initial coordinates of NYC
-  final LatLng _center = const LatLng(40.7128, -74.0060);
   late GoogleMapController mapController;
   List<Marker> marker = [];
 
@@ -187,9 +185,9 @@ class _ActivityContentState extends State<ActivityContent>
               bottomLeft: Radius.circular(30),
             ),
             child: GoogleMap(
-              myLocationButtonEnabled: false,
+              myLocationButtonEnabled: true,
               initialCameraPosition: CameraPosition(
-                target: _center,
+                target: marker.isEmpty?LatLng(widget.user.latitude, widget.user.longitude):marker[0].position,
                 zoom: 11.0,
               ),
               markers: Set.from(marker),

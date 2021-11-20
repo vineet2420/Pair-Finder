@@ -1,14 +1,16 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ipair/ActivityFlow/activity.dart';
+import 'package:ipair/ActivityFlow/activity_handler.dart';
 import 'package:ipair/Model/activity_model.dart';
-import 'package:ipair/UserFlow/local_storage.dart';
 import 'package:ipair/UserFlow/user.dart';
-import 'package:ipair/View/Main/Home/home.dart';
 import 'package:ipair/View/Common/common_ui_elements.dart';
-import 'constants.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:ipair/View/Main/Home/home.dart';
+import 'package:socket_io_client/src/socket.dart';
 
 class ActivityController {
   createActivity(Activity activity, BuildContext context, User user) async {
@@ -43,7 +45,6 @@ class ActivityController {
         );
 
         break;
-
       case 404:
       case 500:
         CommonUiElements().showMessage("Internal Server Error",
@@ -57,28 +58,36 @@ class ActivityController {
     }
   }
 
-  displayNewActivity(BuildContext context, User currentUser) async {
-    int c = 0;
-    print("called");
-    List<String> activityDetails;
-    int activityOwnerId;
-    ActivityModel().socket.on('message', (data) {
-      data = data.toString().replaceAll('[', '');
-      data = data.toString().replaceAll(']', '');
-      data = data.toString().replaceAll('\'', '');
-      activityDetails = data.split(new RegExp(r', +'));
+  Future<List<Activity>> fetchActivities(
+      User user, BuildContext context) async {
+    final List fetchStatus = await ActivityModel().fetchActivities(user);
 
-      activityOwnerId = int.parse(activityDetails[0]);
+    String rawActivityData = "";
+    List activitiesFound = [];
 
-      if (currentUser.uid != activityOwnerId) {
-        CommonUiElements()
-            .showMessage("New Activity Found", data, "Okay", context);
-      }
+    switch (fetchStatus.elementAt(0)) {
+      case 200:
+        rawActivityData = await fetchStatus.elementAt(1);
 
-      print(data.toString() + " c: $c");
-      c++;
-    });
+        final parsedActivities = json.decode(rawActivityData);
+        activitiesFound = parsedActivities['ActivitiesFound'] as List;
+
+        // No events near by
+        if (activitiesFound[0] == "false") {
+          return [];
+        }
+        // print(allActivities);
+
+        return convertJsonToActivity(rawActivityData, 'ActivitiesFound', user);
+      case 404:
+      case 500:
+        return [];
+      default:
+        return [];
+    }
   }
+
+  Socket getActivitySocket() => ActivityModel().socket;
 
   disconnectSocket() => ActivityModel().socket.disconnect();
 
@@ -99,17 +108,18 @@ class ActivityController {
     }
 
     permission = await Geolocator.checkPermission();
-    
+
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
         return Future.error('Location permissions are denied');
       }
     }
     return await Geolocator.getCurrentPosition();
   }
 
-  void permissionDeniedMessage(BuildContext context){
+  void permissionDeniedMessage(BuildContext context) {
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -121,5 +131,47 @@ class ActivityController {
         );
       },
     );
+  }
+
+  List<Activity> convertJsonToActivity(String response, String key, User user){
+    final parsedActivities = json.decode(response);
+
+    // Dynamic 2d list [[activity], [activity]] parsed from json
+    List activitiesFound = parsedActivities[key] as List;
+    List<Activity> allActivities = [];
+
+    for (int outer = 0; outer < activitiesFound.length; outer++) {
+      LatLng pos = LatLng(0, 0);
+      try{
+        pos = LatLng(activitiesFound[outer][3].toDouble(),
+            activitiesFound[outer][4].toDouble());
+
+      }
+      catch (e){
+        // print(e);
+        pos = LatLng(double.parse(activitiesFound[outer][3]),
+            double.parse(activitiesFound[outer][4]));
+      }
+
+      String owner = activitiesFound[outer][0];
+      String activityName = activitiesFound[outer][1];
+      String desc = activitiesFound[outer][2];
+      String pair = activitiesFound[outer][5] == "None"
+          ? ""
+          : activitiesFound[outer][5];
+      String location = activitiesFound[outer][6];
+
+      Activity activity =
+      Activity(owner, activityName, desc, pos, location);
+      activity.pairID = pair;
+
+      if (int.parse(owner) == user.uid){
+        continue;
+      }
+
+      allActivities.add(activity);
+    }
+
+    return allActivities;
   }
 }
