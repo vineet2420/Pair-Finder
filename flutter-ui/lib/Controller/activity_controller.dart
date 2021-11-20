@@ -8,6 +8,7 @@ import 'package:ipair/UserFlow/user.dart';
 import 'package:ipair/View/Main/Home/home.dart';
 import 'package:ipair/View/Common/common_ui_elements.dart';
 import 'constants.dart';
+import 'package:geolocator/geolocator.dart';
 
 class ActivityController {
   createActivity(Activity activity, BuildContext context, User user) async {
@@ -32,7 +33,8 @@ class ActivityController {
                 TextButton(
                   child: Text("Okay"),
                   onPressed: () {
-                    Navigator.of(context).pushReplacementNamed('/home', arguments: user);
+                    Navigator.of(context)
+                        .pushReplacementNamed('/home', arguments: user);
                   },
                 ),
               ],
@@ -85,5 +87,39 @@ class ActivityController {
         await placemarkFromCoordinates(pos.latitude, pos.longitude);
     Placemark place = placemarks[0];
     return "${place.name}, ${place.locality}, ${place.administrativeArea} ${place.postalCode}";
+  }
+
+  Future<Position> getUserLocation(BuildContext context) async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+    return await Geolocator.getCurrentPosition();
+  }
+
+  void permissionDeniedMessage(BuildContext context){
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          title: Text("Location Permission Required"),
+          content: Text("Please enable location services from your settings "
+              "application to continue using the app."),
+        );
+      },
+    );
   }
 }

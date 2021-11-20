@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:ipair/Controller/activity_controller.dart';
 import 'package:ipair/UserFlow/user.dart';
 import '../Activity/activity_content.dart';
@@ -22,16 +23,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   late List<Widget> widgetPages;
   User user = User();
   List<String> cachedData = <String>["", "", "", ""];
+  bool displayedPermissionDenied = false;
 
   Future main() async {
     user = widget.user;
     print(user.getFullName());
+
+    await requestUserLocation();
   }
 
   @protected
   @mustCallSuper
   void initState() {
-
     // Display new activities in real time
     ActivityController().displayNewActivity(context, widget.user);
 
@@ -108,10 +111,34 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
   }
 
+  Future<void> requestUserLocation() async {
+    try {
+      Position pos = await ActivityController().getUserLocation(context);
+      user.latitude = pos.latitude;
+      user.longitude = pos.longitude;
+
+      print(user.latitude);
+      if (displayedPermissionDenied) {
+        Navigator.of(context).pop();
+        displayedPermissionDenied = false;
+      }
+    }
+    catch (e){
+      if (!displayedPermissionDenied){
+        ActivityController().permissionDeniedMessage(context);
+        displayedPermissionDenied = true;
+        print(e);
+      }
+    }
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
+        if (user.latitude == 0){
+          requestUserLocation();
+        }
         print("Back");
         break;
       case AppLifecycleState.inactive:

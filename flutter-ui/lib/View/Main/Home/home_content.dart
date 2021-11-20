@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ipair/View/Common/common_activity_elements.dart';
 import 'package:ipair/View/Main/Schedule/schedule_content.dart';
 import 'package:ipair/View/Common/common_ui_elements.dart';
+import 'package:ipair/ActivityFlow/activity.dart';
 
 class HomeContent extends StatefulWidget {
   const HomeContent({Key? key}) : super(key: key);
@@ -56,7 +58,15 @@ class _HomeContentState extends State<HomeContent> {
         sectionRow("❓", "Random"),
         SizedBox(height: 30),
         CommonUiElements().sectionHeader('Nearby Activities: '),
-        CommonActivityElements().displayAllActivities(context)
+        CommonActivityElements().displayAllActivities(
+            [
+              Activity("1", "_activity_name1", "_activity_description", LatLng(40.7128, -74.0060), "_activityLocation"),
+              Activity("1", "_activity_name2", "_activity_description", LatLng(40.7128, -74.0060), "_activityLocation"),
+              Activity("1", "_activity_name3", "_activity_description", LatLng(40.7128, -74.0060), "_activityLocation")
+
+            ]
+            , context
+        )
       ],
     ));
   }

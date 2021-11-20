@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:ipair/Controller/activity_controller.dart';
 import 'package:ipair/Controller/constants.dart';
 import 'package:ipair/Model/activity_model.dart';
 import 'package:ipair/Model/auth_model.dart';
 import 'local_storage.dart';
+import 'package:geolocator/geolocator.dart';
 
 class User {
   String
@@ -10,6 +12,8 @@ class User {
   String _fullName = "null";
   int uid = -1;
   List<String> cachedData = <String>["", "", "", ""];
+  double latitude = 0;
+  double longitude = 0;
 
   User();
 

@@ -22,7 +22,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		utKhrLjREo7eVzME7pW6O+0bPVs=
+		g/UR8RYsrwr7RK/SgB+OeTX2g3U=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -33,10 +33,6 @@
 	<dict>
 		<key>Headers/CLPlacemarkExtensions.h</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			gTx/s6dgy2w9BcAkgDc4GOFfnXc=
-			</data>
 			<key>hash2</key>
 			<data>
 			AL5iR9Aa02UTMsWOjzp1w+eJetqYn8kZNq9rgwC7VMs=
@@ -44,10 +40,6 @@
 		</dict>
 		<key>Headers/GeocodingHandler.h</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			UaRF7CIcft3Azpc2ppY/pB47XW0=
-			</data>
 			<key>hash2</key>
 			<data>
 			NuFa+JFV6XkN1UEZnZZ5iOzi/QHQRAGRAjccxJ/SXJA=
@@ -55,10 +47,6 @@
 		</dict>
 		<key>Headers/GeocodingPlugin.h</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			izQCqPBpvHyHK1g63+D/efiaolU=
-			</data>
 			<key>hash2</key>
 			<data>
 			GOSe7w4+mDA1xWlMe89nf4mkRUoo0w0OTwvQdanFq1Y=
@@ -66,10 +54,6 @@
 		</dict>
 		<key>Headers/geocoding-umbrella.h</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			GN7jb2zvH2A/H4TnDxAva4DZZ6U=
-			</data>
 			<key>hash2</key>
 			<data>
 			AG5n8IfBnJfeRxBGPSzj4Xz7FOtQOEfzWtZOC8hsXF0=
@@ -77,10 +61,6 @@
 		</dict>
 		<key>Modules/module.modulemap</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			XIuKizpbjFQ+2usgKDPF82bxxM8=
-			</data>
 			<key>hash2</key>
 			<data>
 			0GyBpD+hL+9DS9IJuai4OnVTHpD/4vWtwVrlJG2YS1I=
