@@ -9,7 +9,8 @@ from flask_socketio import SocketIO, emit, send
 def create_activity():
     if request.args.get('owner') is None or request.args.get('actname') is None \
     or request.args.get('actdesc') is None or request.args.get('actlat') is None \
-    or request.args.get('actlong') is None or request.args.get('creationtime') is None:
+    or request.args.get('actlong') is None or request.args.get('creationtime') is None \
+            or request.args.get('actaddress') is None:
         return make_response('{"Bad Request": "Check URL"}', 400)
 
     ownerReceived = format(request.args.get('owner'))
@@ -18,17 +19,25 @@ def create_activity():
     latitudeReceived = format(request.args.get('actlat'))
     longitudeReceived = format(request.args.get('actlong'))
     timestampReceived = format(request.args.get('creationtime'))
+    addressReceived = format(request.args.get('actaddress'))
 
-    new_Activity = [ownerReceived, nameReceived, descReceived, latitudeReceived, longitudeReceived, timestampReceived]
+    new_activity = [ownerReceived, nameReceived, descReceived, latitudeReceived, longitudeReceived, timestampReceived, addressReceived]
+    new_activity_json_value = ""
+    for value in new_activity:
+        if isinstance(value, str):
+            new_activity_json_value = new_activity_json_value + "\"" + value + "\"" + ", "
+        else:
+            new_activity_json_value = new_activity_json_value + value + ", "
+    new_activity_json_value = new_activity_json_value[:-2]
 
     conn = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
 
     cursor = conn.cursor()
-    SQL = 'INSERT INTO "activities" (owner, act_name, act_desc, act_latitude, act_longitude, time) ' \
-          'VALUES (%s, %s, %s, %s, %s, %s);'
+    SQL = 'INSERT INTO "activities" (owner, act_name, act_desc, act_latitude, act_longitude, time, address) ' \
+          'VALUES (%s, %s, %s, %s, %s, %s, %s);'
 
     with conn, conn.cursor() as cursor:
-        cursor.execute(SQL, [ownerReceived, nameReceived, descReceived, latitudeReceived, longitudeReceived, timestampReceived])
+        cursor.execute(SQL, [ownerReceived, nameReceived, descReceived, latitudeReceived, longitudeReceived, timestampReceived, addressReceived])
 
     status = cursor.statusmessage
     conn.close()
@@ -36,7 +45,7 @@ def create_activity():
 
     try:
         if str(status) is not "None":
-            send_new_event(str(new_Activity))
+            send_new_event('{"ActivityCreated": [[' + str(new_activity_json_value) + ']]}')
             return make_response('{"ActivityCreated": "true"}', 200)
     except Exception as e:
         return make_response('{"ActivityCreated": "false"}', 404)
@@ -54,8 +63,8 @@ def fetch_ranged_activities():
     conn = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
 
     cursor = conn.cursor()
-    SQL = 'SELECT * FROM "activities" WHERE acos(sin(%s) * ' \
-          'sin(RADIANS(act_latitude)) + cos(%s) * cos(RADIANS(act_latitude)) ' \
+    SQL = 'SELECT owner, act_name, act_desc, act_latitude, act_longitude, pair, address FROM "activities" WHERE ' \
+          'acos(sin(%s) * sin(RADIANS(act_latitude)) + cos(%s) * cos(RADIANS(act_latitude)) ' \
           '* cos(RADIANS(act_longitude) - (%s))) * 3958.8 <= %s; '
 
     user_lat_radians = math.radians(float(latitudeReceived))
@@ -67,13 +76,24 @@ def fetch_ranged_activities():
         all_activities = cursor.fetchall()
 
     print(all_activities)
-
+    all_activities_list = []
+    all_activities_json_value = ""
     try:
         if (len(str(all_activities))==2):
-            return make_response('{"ActivitiesFound": "false"}', 200)
+            return make_response('{"ActivitiesFound": ["false"]}', 200)
 
         elif str(all_activities) is not "None":
-            return make_response('{"ActivitiesFound: ": ' + str(all_activities) + '}', 200)
+
+            for inner_tuple in all_activities:
+                all_activities_list.append(str(inner_tuple).replace("\'","\"").replace("(","[").replace(")","]").replace("None", "\"None\""))
+            #print(all_activities_list)
+
+            for activity in all_activities_list:
+                all_activities_json_value = all_activities_json_value + activity + ", "
+
+            all_activities_json_value = all_activities_json_value[:-2]
+            print(all_activities_json_value)
+            return make_response('{"ActivitiesFound": [' + str(all_activities_json_value) + ']}', 200)
 
     except Exception as e:
         return make_response('{"ErrorWhileFetching": '+str(e)+'}', 404)
