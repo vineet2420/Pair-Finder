@@ -18,13 +18,17 @@ class StreamSocket {
   }
 }
 
+enum FetchActivityType {
+  Near, Sent, Going
+}
+
 class ActivityModel {
 
   StreamSocket activitySocketStream = StreamSocket();
 
 // 'http://127.0.0.1:8000'
   // http://ec2-52-201-232-123.compute-1.amazonaws.com:5000
-  IO.Socket socket = IO.io('http://127.0.0.1:8000',
+  IO.Socket socket = IO.io('http://localhost:8000',
       <String, dynamic>{
     'transports': ['websocket']
   });
@@ -51,20 +55,37 @@ class ActivityModel {
 
   }
 
-  final String fetchActivityRoute = "http://localhost:8000/activity/fetch?";
+  final String fetchNearActivityRoute = "http://localhost:8000/activity/fetch?";
+  final String fetchSentActivityRoute = "http://localhost:8000/activity/fetchSent?";
+  final String fetchGoingActivityRoute = "http://localhost:8000/activity/fetchGoing?";
+
   //"http://ec2-52-201-232-123.compute-1.amazonaws.com:5000/activity/fetch?";
 
-  Future<List> fetchActivities (User user) async {
+  Future<List> fetchActivities (User user, FetchActivityType type) async {
     final response;
     print("(${user.latitude}, ${user.longitude})");
     try {
-      response = await http.get(
-          Uri.parse(fetchActivityRoute + 'userlat=' + user.latitude.toString() + "&userlong=" + user.longitude.toString()
-              + "&userradius=50"));
+      switch (type){
+
+        case FetchActivityType.Near:
+          response = await http.get(
+              Uri.parse(fetchNearActivityRoute + 'userlat=' + user.latitude.toString() + "&userlong=" + user.longitude.toString()
+                  + "&userradius=50"));
+          return [response.statusCode, response.body];
+
+        case FetchActivityType.Sent:
+          response = await http.get(
+              Uri.parse(fetchSentActivityRoute + 'owner=' + user.uid.toString()));
+          print("Received Sent Events: ${response.body}");
+          return [response.statusCode, response.body];
+
+        case FetchActivityType.Going:
+          response = await http.get(
+              Uri.parse(fetchGoingActivityRoute + 'pair=' + user.uid.toString()));
+          return [response.statusCode, response.body];
+      }
 
       // print("Activity Fetched Status: ${response.body}");
-
-      return [response.statusCode, response.body];
 
     } on Exception catch (e) {
 
@@ -96,7 +117,7 @@ class ActivityModel {
     //         activitySocketStream.socketStreamSink.add(data.toString());
     //     });
 
-   // socket.disconnect();
+   //socket.disconnect();
   }
 
   Future<Widget> socketOutput(BuildContext context) async {

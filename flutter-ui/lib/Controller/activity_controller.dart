@@ -5,15 +5,22 @@ import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ipair/ActivityFlow/activity.dart';
 import 'package:ipair/ActivityFlow/activity_handler.dart';
+import 'package:ipair/Controller/tab_state_provider.dart';
 import 'package:ipair/Model/activity_model.dart';
 import 'package:ipair/UserFlow/user.dart';
 import 'package:ipair/View/Common/common_ui_elements.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:ipair/View/Main/Home/home.dart';
 import 'package:socket_io_client/src/socket.dart';
+import 'package:provider/provider.dart';
+
+import 'activity_state_provider.dart';
 
 class ActivityController {
   createActivity(Activity activity, BuildContext context, User user) async {
+
+    TabStateProvider tabProvider = Provider.of<TabStateProvider>(context, listen: false);
+
     final List creationStatus =
         await ActivityModel().fetchActivityCreationStatus(activity);
 
@@ -35,8 +42,8 @@ class ActivityController {
                 TextButton(
                   child: Text("Okay"),
                   onPressed: () {
-                    Navigator.of(context)
-                        .pushReplacementNamed('/home', arguments: user);
+                    Navigator.pop(context);
+                    tabProvider.changeTab(2);
                   },
                 ),
               ],
@@ -59,8 +66,8 @@ class ActivityController {
   }
 
   Future<List<Activity>> fetchActivities(
-      User user, BuildContext context) async {
-    final List fetchStatus = await ActivityModel().fetchActivities(user);
+      User user, FetchActivityType type, BuildContext context) async {
+    final List fetchStatus = await ActivityModel().fetchActivities(user, type);
 
     String rawActivityData = "";
     List activitiesFound = [];
@@ -78,7 +85,7 @@ class ActivityController {
         }
         // print(allActivities);
 
-        return convertJsonToActivity(rawActivityData, 'ActivitiesFound', user);
+        return convertJsonToActivity(rawActivityData, 'ActivitiesFound', user, type);
       case 404:
       case 500:
         return [];
@@ -87,7 +94,27 @@ class ActivityController {
     }
   }
 
-  Socket getActivitySocket() => ActivityModel().socket;
+  displayNewActivity(BuildContext context, User currentUser) async {
+
+    ActivityStateProvider activityStateProvider = Provider.of<ActivityStateProvider>(context, listen: false);
+
+    int c = 0;
+    print("called");
+    ActivityModel().socket.on('message', (data) {
+      List<Activity> newSingleActivity = ActivityController()
+          .convertJsonToActivity(data, 'ActivityCreated', currentUser, FetchActivityType.Near);
+
+      if (newSingleActivity.isNotEmpty) {
+
+        activityStateProvider.addNearByActivity(newSingleActivity[0]);
+
+        CommonUiElements().showMessage(
+            "New Event Found!", newSingleActivity[0].activityName, "Okay",
+            context);
+      }
+      print(data);
+    });
+  }
 
   disconnectSocket() => ActivityModel().socket.disconnect();
 
@@ -133,13 +160,13 @@ class ActivityController {
     );
   }
 
-  List<Activity> convertJsonToActivity(String response, String key, User user){
+  List<Activity> convertJsonToActivity(String response, String key, User user, FetchActivityType type){
     final parsedActivities = json.decode(response);
 
     // Dynamic 2d list [[activity], [activity]] parsed from json
     List activitiesFound = parsedActivities[key] as List;
     List<Activity> allActivities = [];
-
+    // print(activitiesFound);
     for (int outer = 0; outer < activitiesFound.length; outer++) {
       LatLng pos = LatLng(0, 0);
       try{
@@ -148,7 +175,7 @@ class ActivityController {
 
       }
       catch (e){
-        // print(e);
+        print("$e for ${activitiesFound[outer][3]}");
         pos = LatLng(double.parse(activitiesFound[outer][3]),
             double.parse(activitiesFound[outer][4]));
       }
@@ -165,7 +192,8 @@ class ActivityController {
       Activity(owner, activityName, desc, pos, location);
       activity.pairID = pair;
 
-      if (int.parse(owner) == user.uid){
+      // Skip events sent by the user to display in near by activities
+      if (type == FetchActivityType.Near && int.parse(owner) == user.uid){
         continue;
       }
 

@@ -152,4 +152,9 @@ class CommonActivityElements {
         )
     );
   }
+
+  Widget activityListHeader(String headerText){
+    return Row(mainAxisAlignment: MainAxisAlignment.start, children: [Container(padding: EdgeInsets.fromLTRB(20, 20, 0, 0), child: Text(headerText, style: TextStyle(fontSize: 20),))]);
+  }
+
 }

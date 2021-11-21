@@ -99,9 +99,53 @@ def fetch_ranged_activities():
         return make_response('{"ErrorWhileFetching": '+str(e)+'}', 404)
 
 
-@app.route('/activity/adduser', methods=['GET', 'POST'])
-def add_user():
-    return "ready to read"
+@app.route('/activity/fetchGoing', methods=['GET', 'POST'])
+def fetch_going_activities():
+    return fetch_activities_generic('pair')
+
+@app.route('/activity/fetchSent', methods=['GET', 'POST'])
+def fetch_sent_activities():
+    return fetch_activities_generic('owner')
+
+def fetch_activities_generic(whereField):
+    if request.args.get(whereField) is None:
+        return make_response('{"Bad Request": "Check URL"}', 400)
+
+    ownerReceived = format(request.args.get(whereField))
+
+    conn = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
+
+    cursor = conn.cursor()
+    SQL = 'SELECT owner, act_name, act_desc, act_latitude, act_longitude, pair, address FROM "activities" WHERE ' + \
+          whereField + '= %s'
+
+    with conn, conn.cursor() as cursor:
+        cursor.execute(SQL, [ownerReceived])
+
+        all_activities = cursor.fetchall()
+
+    print(all_activities)
+    all_activities_list = []
+    all_activities_json_value = ""
+    try:
+        if (len(str(all_activities))==2):
+            return make_response('{"ActivitiesFound": ["false"]}', 200)
+
+        elif str(all_activities) is not "None":
+
+            for inner_tuple in all_activities:
+                all_activities_list.append(str(inner_tuple).replace("\'","\"").replace("(","[").replace(")","]").replace("None", "\"None\""))
+            #print(all_activities_list)
+
+            for activity in all_activities_list:
+                all_activities_json_value = all_activities_json_value + activity + ", "
+
+            all_activities_json_value = all_activities_json_value[:-2]
+            print(all_activities_json_value)
+            return make_response('{"ActivitiesFound": [' + str(all_activities_json_value) + ']}', 200)
+    except Exception as e:
+        return make_response('{"ErrorWhileFetchingSentActivities": '+str(e)+'}', 404)
+
 
 
 @socket.on('connected')

@@ -1,0 +1,74 @@
+[
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/common_google_signin_btn_icon_disabled.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/res/drawable/common_google_signin_btn_icon_disabled.xml"
+    },
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/common_google_signin_btn_icon_light_focused.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/res/drawable/common_google_signin_btn_icon_light_focused.xml"
+    },
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/common_google_signin_btn_text_light_normal.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/res/drawable/common_google_signin_btn_text_light_normal.xml"
+    },
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/notification_tile_bg.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/2e94107f30f39be366a17347c2bf100b/core-1.1.0/res/drawable/notification_tile_bg.xml"
+    },
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/common_google_signin_btn_text_dark_focused.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/res/drawable/common_google_signin_btn_text_dark_focused.xml"
+    },
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/notification_bg_low.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/2e94107f30f39be366a17347c2bf100b/core-1.1.0/res/drawable/notification_bg_low.xml"
+    },
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/common_google_signin_btn_icon_light_normal.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/res/drawable/common_google_signin_btn_icon_light_normal.xml"
+    },
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/common_google_signin_btn_icon_dark_focused.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/res/drawable/common_google_signin_btn_icon_dark_focused.xml"
+    },
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/notification_bg.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/2e94107f30f39be366a17347c2bf100b/core-1.1.0/res/drawable/notification_bg.xml"
+    },
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/common_google_signin_btn_text_dark_normal.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/res/drawable/common_google_signin_btn_text_dark_normal.xml"
+    },
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/common_google_signin_btn_text_light.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/res/drawable/common_google_signin_btn_text_light.xml"
+    },
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/common_google_signin_btn_text_dark.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/res/drawable/common_google_signin_btn_text_dark.xml"
+    },
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/common_google_signin_btn_icon_light.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/res/drawable/common_google_signin_btn_icon_light.xml"
+    },
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/notification_icon_background.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/2e94107f30f39be366a17347c2bf100b/core-1.1.0/res/drawable/notification_icon_background.xml"
+    },
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/common_google_signin_btn_icon_dark_normal.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/res/drawable/common_google_signin_btn_icon_dark_normal.xml"
+    },
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/common_google_signin_btn_text_disabled.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/res/drawable/common_google_signin_btn_text_disabled.xml"
+    },
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/common_google_signin_btn_icon_dark.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/res/drawable/common_google_signin_btn_icon_dark.xml"
+    },
+    {
+        "merged": "/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/google_maps_flutter/intermediates/res/merged/debug/drawable/common_google_signin_btn_text_light_focused.xml",
+        "source": "/Users/vinnymalhotra/.gradle/caches/transforms-2/files-2.1/7c879cb157fab2c9a5d74c3d70fd64e3/jetified-play-services-base-17.0.0/res/drawable/common_google_signin_btn_text_light_focused.xml"
+    }
+]

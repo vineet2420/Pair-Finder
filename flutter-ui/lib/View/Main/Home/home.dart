@@ -5,16 +5,20 @@ import 'package:geolocator/geolocator.dart';
 import 'package:ipair/ActivityFlow/activity.dart';
 import 'package:ipair/ActivityFlow/activity_handler.dart';
 import 'package:ipair/Controller/activity_controller.dart';
+import 'package:ipair/Controller/tab_state_provider.dart';
 import 'package:ipair/Model/activity_model.dart';
 import 'package:ipair/UserFlow/user.dart';
 import 'package:ipair/View/Common/common_ui_elements.dart';
+import 'package:provider/provider.dart';
 import '../Activity/activity_content.dart';
 import '../Schedule/schedule_content.dart';
 import 'home_content.dart';
+import 'package:ipair/Controller/activity_state_provider.dart';
 
 // For the home page UI
 class HomePage extends StatefulWidget {
   final User user;
+
   const HomePage(User this.user, {Key? key}) : super(key: key);
 
   @override
@@ -22,11 +26,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  int indexToSet = 0;
+ // int indexToSet = 0;
   late List<Widget> widgetPages;
   User user = User();
   List<String> cachedData = <String>["", "", "", ""];
   bool displayedPermissionDenied = false;
+  late TabStateProvider tabProvider;
 
   Future main() async {
     user = widget.user;
@@ -38,8 +43,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @protected
   @mustCallSuper
   void initState() {
+    tabProvider = Provider.of<TabStateProvider>(context, listen: false);
     // Display new activities in real time
-    displayNewActivity(context, widget.user);
+    ActivityController().displayNewActivity(context, widget.user);
+    print("in init");
+
+    FetchSentAndGoingActivities();
 
     // Call after frame is rendered
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -50,9 +59,24 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     WidgetsBinding.instance!.addObserver(this);
   }
 
+  void FetchSentAndGoingActivities() async {
+    ActivityStateProvider activityStateProvider = Provider.of<ActivityStateProvider>(context, listen: false);
+
+    List<Activity> sentActivities = await ActivityController().fetchActivities(widget.user, FetchActivityType.Sent, context);
+    activityStateProvider.addSentActivities(sentActivities);
+
+    List<Activity> goingActivities = await ActivityController().fetchActivities(widget.user, FetchActivityType.Going, context);
+    activityStateProvider.addGoingActivities(goingActivities);
+
+    print("Sent activities $sentActivities");
+  }
+
+
   onTabSelected(int requestedIndex) {
+
+    tabProvider.changeTab(requestedIndex);
     setState(() {
-      indexToSet = requestedIndex;
+      //indexToSet = requestedIndex;
     });
   }
 
@@ -64,21 +88,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       ScheduleContent()
     ];
 
-    return CupertinoPageScaffold(
-      child: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return navigationController(indexToSet == 0
-              ? 'Welcome, ${widget.user.getFirstName()}'
-              : indexToSet == 1
-                  ? "Create Activity"
-                  : "My Activities");
-        },
-        body: Scaffold(
-          body: widgetPages[indexToSet],
-          bottomNavigationBar: bottomNavBar(),
-        ),
-      ),
-    );
+    return Consumer<TabStateProvider>(
+        builder: (context, tabProvider, child) => CupertinoPageScaffold(
+        child: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled)
+    {
+      return navigationController(tabProvider.tab == 0
+          ? 'Welcome, ${widget.user.getFirstName()}'
+          : tabProvider.tab == 1
+          ? "Create Activity"
+          : "My Activities");
+    },
+    body: Scaffold(
+    body: widgetPages[tabProvider.tab],
+    bottomNavigationBar: bottomNavBar(),
+    ),
+    ),
+    ));
   }
 
   List<Widget> navigationController(String navBarText) {
@@ -86,7 +112,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       CupertinoSliverNavigationBar(
         automaticallyImplyLeading: false,
         largeTitle: AutoSizeText(navBarText),
-        trailing: indexToSet == 0 ? accountSettings() : null,
+        trailing: tabProvider.tab == 0 ? accountSettings() : null,
       )
     ];
   }
@@ -94,16 +120,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget accountSettings() {
     return Material(
         child: IconButton(
-      icon: const Icon(Icons.manage_accounts_outlined),
-      onPressed: () {
-        Navigator.pushNamed(context, '/account', arguments: user);
-      },
-    ));
+          icon: const Icon(Icons.manage_accounts_outlined),
+          onPressed: () {
+            Navigator.pushNamed(context, '/account', arguments: user);
+          },
+        ));
   }
 
   Widget bottomNavBar() {
     return BottomNavigationBar(
-      currentIndex: indexToSet,
+      currentIndex: tabProvider.tab,
       onTap: onTabSelected,
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
@@ -115,6 +141,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Future<void> requestUserLocation() async {
+    ActivityStateProvider activityStateProvider = Provider.of<ActivityStateProvider>(context, listen: false);
+
     try {
       Position pos = await ActivityController().getUserLocation(context);
       user.latitude = pos.latitude;
@@ -127,15 +155,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         displayedPermissionDenied = false;
       }
 
-        ActivityHandler().nearByActivities = await ActivityController().fetchActivities(user, context);
-
-    setState((){
-      HomeContent();
-    });
-
+      activityStateProvider.addAllNearByActivities(await ActivityController().fetchActivities(user, FetchActivityType.Near, context));
     }
-    catch (e){
-      if (!displayedPermissionDenied){
+    catch (e) {
+      if (!displayedPermissionDenied) {
         ActivityController().permissionDeniedMessage(context);
         displayedPermissionDenied = true;
         print(e);
@@ -147,7 +170,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        if (user.latitude == 0){
+        if (user.latitude == 0) {
           requestUserLocation();
         }
         print("Back");
@@ -167,24 +190,5 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         break;
     }
   }
-
-  displayNewActivity(BuildContext context, User currentUser) async {
-    int c = 0;
-    print("called");
-    ActivityController().getActivitySocket().on('message', (data) {
-
-      List<Activity> newSingleActivity = ActivityController().convertJsonToActivity(data, 'ActivityCreated', currentUser);
-      if (newSingleActivity.isNotEmpty){
-        ActivityHandler().nearByActivities.add(newSingleActivity[0]);
-        CommonUiElements().showMessage("New Event Found!", newSingleActivity[0].activityName, "Okay", context);
-        setState((){
-          HomeContent();
-        });
-      }
-      print(data);
-    });
-  }
-
-
 
 }

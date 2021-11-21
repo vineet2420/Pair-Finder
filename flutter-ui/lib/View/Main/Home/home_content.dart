@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ipair/ActivityFlow/activity_handler.dart';
+import 'package:ipair/Controller/activity_state_provider.dart';
+import 'package:ipair/Controller/tab_state_provider.dart';
 import 'package:ipair/View/Common/common_activity_elements.dart';
 import 'package:ipair/View/Main/Schedule/schedule_content.dart';
 import 'package:ipair/View/Common/common_ui_elements.dart';
 import 'package:ipair/ActivityFlow/activity.dart';
+import 'package:provider/provider.dart';
 
 class HomeContent extends StatefulWidget {
 
@@ -17,15 +20,17 @@ class HomeContent extends StatefulWidget {
 class _HomeContentState extends State<HomeContent> {
 
   @override
-  Widget build(BuildContext context) => setupHomeContent();
+  Widget build(BuildContext context) => Consumer<ActivityStateProvider>(
+      builder: (context, activityStateProvider, child) => setupHomeContent());
 
   Widget setupHomeContent() {
+    TabStateProvider tabProvider = Provider.of<TabStateProvider>(context, listen: false);
+
     print(ActivityHandler().nearByActivities);
+
     return SingleChildScrollView(
         child: Column(
       children: <Widget>[
-        SizedBox(height: 20),
-        //ActivityModel().socketOutput(),
         SizedBox(height: 20),
         Container(
             //color: Colors.red,
@@ -36,6 +41,11 @@ class _HomeContentState extends State<HomeContent> {
                 crossAxisCount: 2,
                 children: <Widget>[
                   // TODO After midterm - refactor this into its own object with more info about destination
+
+                  IconButton(icon: Icon(Icons.next_plan), onPressed: (){
+                    tabProvider.changeTab(1);
+                    print("pushed");
+                  },),
                   Center(child: Text("🍽", style: TextStyle(fontSize: 30))),
                   Center(child: Text("🍿", style: TextStyle(fontSize: 30))),
                   Center(child: Text("🚵‍♀️", style: TextStyle(fontSize: 30))),
@@ -60,7 +70,8 @@ class _HomeContentState extends State<HomeContent> {
         sectionRow("🗺", "Explore"),
         sectionRow("❓", "Random"),
         SizedBox(height: 30),
-        CommonUiElements().sectionHeader('Nearby Activities: '),
+        // CommonUiElements().sectionHeader('Nearby Activities: '),
+        CommonActivityElements().activityListHeader('Nearby Activities: '),
       CommonActivityElements().displayAllActivities(ActivityHandler().nearByActivities, context)
       ],
     ));
