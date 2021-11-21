@@ -63,7 +63,7 @@ class ActivityModel {
 
   Future<List> fetchActivities (User user, FetchActivityType type) async {
     final response;
-    print("(${user.latitude}, ${user.longitude})");
+    // print("(${user.latitude}, ${user.longitude})");
     try {
       switch (type){
 
@@ -76,7 +76,7 @@ class ActivityModel {
         case FetchActivityType.Sent:
           response = await http.get(
               Uri.parse(fetchSentActivityRoute + 'owner=' + user.uid.toString()));
-          print("Received Sent Events: ${response.body}");
+          // print("Received Sent Events: ${response.body}");
           return [response.statusCode, response.body];
 
         case FetchActivityType.Going:
@@ -117,7 +117,7 @@ class ActivityModel {
     //         activitySocketStream.socketStreamSink.add(data.toString());
     //     });
 
-   //socket.disconnect();
+   // socket.disconnect();
   }
 
   Future<Widget> socketOutput(BuildContext context) async {

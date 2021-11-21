@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   Future main() async {
     user = widget.user;
-    print(user.getFullName());
+    // print(user.getFullName());
 
     await requestUserLocation();
   }
@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     List<Activity> goingActivities = await ActivityController().fetchActivities(widget.user, FetchActivityType.Going, context);
     activityStateProvider.addGoingActivities(goingActivities);
 
-    print("Sent activities $sentActivities");
+    // print("Sent activities $sentActivities");
   }
 
 
@@ -148,7 +148,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       user.latitude = pos.latitude;
       user.longitude = pos.longitude;
 
-      print(user.latitude);
+      // print(user.latitude);
 
       if (displayedPermissionDenied) {
         Navigator.of(context).pop();

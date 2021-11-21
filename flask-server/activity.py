@@ -63,7 +63,7 @@ def fetch_ranged_activities():
     conn = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
 
     cursor = conn.cursor()
-    SQL = 'SELECT owner, act_name, act_desc, act_latitude, act_longitude, pair, address FROM "activities" WHERE ' \
+    SQL = 'SELECT aid, owner, act_name, act_desc, act_latitude, act_longitude, pair, address FROM "activities" WHERE ' \
           'acos(sin(%s) * sin(RADIANS(act_latitude)) + cos(%s) * cos(RADIANS(act_latitude)) ' \
           '* cos(RADIANS(act_longitude) - (%s))) * 3958.8 <= %s; '
 
@@ -116,7 +116,7 @@ def fetch_activities_generic(whereField):
     conn = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
 
     cursor = conn.cursor()
-    SQL = 'SELECT owner, act_name, act_desc, act_latitude, act_longitude, pair, address FROM "activities" WHERE ' + \
+    SQL = 'SELECT aid, owner, act_name, act_desc, act_latitude, act_longitude, pair, address FROM "activities" WHERE ' + \
           whereField + '= %s'
 
     with conn, conn.cursor() as cursor:
@@ -146,8 +146,6 @@ def fetch_activities_generic(whereField):
     except Exception as e:
         return make_response('{"ErrorWhileFetchingSentActivities": '+str(e)+'}', 404)
 
-
-
 @socket.on('connected')
 def handle_id(data):
     print(data)
@@ -156,3 +154,6 @@ def handle_id(data):
 def send_new_event(activity):
     print('Sent activity: ' + activity)
     send(activity, broadcast=True, namespace="")
+
+# @socket.on('message')
+# def send_updated_activity(activity):

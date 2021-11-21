@@ -46,7 +46,7 @@ class User {
   }
 
   Future syncWithDB() async {
-    print("in cache");
+    print("syncing with db info");
     // Controller method
     try{
       List allData = await Auth().fetchUserDetails(uid);

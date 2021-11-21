@@ -21,14 +21,14 @@ class _ScheduleContentState extends State<ScheduleContent> {
         builder: (context, activityStateProvider, child) => setupSchedule());
 
   Widget setupSchedule() {
-    print(ActivityHandler().sentActivities);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        CommonActivityElements().activityListHeader("Sent"),
-        CommonActivityElements().displayAllActivities(ActivityHandler().sentActivities, context),
-        CommonActivityElements().activityListHeader("Going"),
-        CommonActivityElements().displayAllActivities(ActivityHandler().attendingActivities, context),
+        CommonActivityElements().activityListHeader("Sent:"),
+        CommonActivityElements().displayAllActivities(ActivityHandler().sentActivities, false, context),
+        CommonActivityElements().activityListHeader("Going:"),
+        CommonActivityElements().displayAllActivities(ActivityHandler().attendingActivities, false, context),
       ],
     );
   }

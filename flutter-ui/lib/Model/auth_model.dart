@@ -44,7 +44,7 @@ class Auth {
     try {
       final response =
           await http.post(Uri.parse(userDetailsRoute + uid.toString()));
-      print("User Details: ${response.body}");
+      // print("User Details: ${response.body}");
       return [response.statusCode, response.body];
     } on Exception catch (e) {
       print("Sever Error: $e");

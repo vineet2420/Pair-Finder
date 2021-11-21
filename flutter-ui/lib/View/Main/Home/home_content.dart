@@ -26,8 +26,6 @@ class _HomeContentState extends State<HomeContent> {
   Widget setupHomeContent() {
     TabStateProvider tabProvider = Provider.of<TabStateProvider>(context, listen: false);
 
-    print(ActivityHandler().nearByActivities);
-
     return SingleChildScrollView(
         child: Column(
       children: <Widget>[
@@ -72,7 +70,7 @@ class _HomeContentState extends State<HomeContent> {
         SizedBox(height: 30),
         // CommonUiElements().sectionHeader('Nearby Activities: '),
         CommonActivityElements().activityListHeader('Nearby Activities: '),
-      CommonActivityElements().displayAllActivities(ActivityHandler().nearByActivities, context)
+      CommonActivityElements().displayAllActivities(ActivityHandler().nearByActivities, true, context)
       ],
     ));
   }

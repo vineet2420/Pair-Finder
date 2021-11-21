@@ -14,7 +14,7 @@ class AuthController {
     switch (isUser.elementAt(0)) {
       case 200:
         userData = await isUser.elementAt(1);
-        print("User data: ${userData}");
+        // print("User data: ${userData}");
         Navigator.pushNamedAndRemoveUntil(
             context, "/home", (Route<dynamic> route) => false,
             arguments: User.newLogIn(userData));

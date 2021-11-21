@@ -3,6 +3,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class Activity{
   String owner = "null";
 
+  String _activityID = "";
+  set setActivityID(String aid) => _activityID = aid;
+  get getActivityID => _activityID;
+
   String _activity_name = "null";
   get activityName => _activity_name;
 

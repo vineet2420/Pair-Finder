@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("In build: ${cachedData}");
+    print("In cache: ${cachedData}");
     int uid = -1;
 
     if (cachedData.elementAt(0).isNotEmpty) {

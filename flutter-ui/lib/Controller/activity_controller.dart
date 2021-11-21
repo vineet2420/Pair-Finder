@@ -99,7 +99,7 @@ class ActivityController {
     ActivityStateProvider activityStateProvider = Provider.of<ActivityStateProvider>(context, listen: false);
 
     int c = 0;
-    print("called");
+    // print("called");
     ActivityModel().socket.on('message', (data) {
       List<Activity> newSingleActivity = ActivityController()
           .convertJsonToActivity(data, 'ActivityCreated', currentUser, FetchActivityType.Near);
@@ -112,6 +112,7 @@ class ActivityController {
             "New Event Found!", newSingleActivity[0].activityName, "Okay",
             context);
       }
+
       print(data);
     });
   }
@@ -166,31 +167,31 @@ class ActivityController {
     // Dynamic 2d list [[activity], [activity]] parsed from json
     List activitiesFound = parsedActivities[key] as List;
     List<Activity> allActivities = [];
-    // print(activitiesFound);
+    // print(activitiesFound[0]);
     for (int outer = 0; outer < activitiesFound.length; outer++) {
       LatLng pos = LatLng(0, 0);
       try{
-        pos = LatLng(activitiesFound[outer][3].toDouble(),
-            activitiesFound[outer][4].toDouble());
+        pos = LatLng(activitiesFound[outer][4].toDouble(),
+            activitiesFound[outer][5].toDouble());
 
       }
       catch (e){
-        print("$e for ${activitiesFound[outer][3]}");
         pos = LatLng(double.parse(activitiesFound[outer][3]),
             double.parse(activitiesFound[outer][4]));
       }
-
-      String owner = activitiesFound[outer][0];
-      String activityName = activitiesFound[outer][1];
-      String desc = activitiesFound[outer][2];
-      String pair = activitiesFound[outer][5] == "None"
+      String aid = activitiesFound[outer][0].toString();
+      String owner = activitiesFound[outer][1];
+      String activityName = activitiesFound[outer][2];
+      String desc = activitiesFound[outer][3];
+      String pair = activitiesFound[outer][6] == "None"
           ? ""
-          : activitiesFound[outer][5];
-      String location = activitiesFound[outer][6];
+          : activitiesFound[outer][6];
+      String location = activitiesFound[outer][7];
 
       Activity activity =
       Activity(owner, activityName, desc, pos, location);
       activity.pairID = pair;
+      activity.setActivityID = aid;
 
       // Skip events sent by the user to display in near by activities
       if (type == FetchActivityType.Near && int.parse(owner) == user.uid){
