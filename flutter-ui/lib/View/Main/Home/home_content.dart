@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ipair/ActivityFlow/activity_handler.dart';
 import 'package:ipair/Controller/activity_state_provider.dart';
 import 'package:ipair/Controller/tab_state_provider.dart';
+import 'package:ipair/UserFlow/user.dart';
 import 'package:ipair/View/Common/common_activity_elements.dart';
 import 'package:ipair/View/Main/Schedule/schedule_content.dart';
 import 'package:ipair/View/Common/common_ui_elements.dart';
@@ -11,7 +12,8 @@ import 'package:provider/provider.dart';
 
 class HomeContent extends StatefulWidget {
 
-  const HomeContent({Key? key}) : super(key: key);
+  final User user;
+  const HomeContent(User this.user, {Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _HomeContentState();
@@ -24,6 +26,7 @@ class _HomeContentState extends State<HomeContent> {
       builder: (context, activityStateProvider, child) => setupHomeContent());
 
   Widget setupHomeContent() {
+
     TabStateProvider tabProvider = Provider.of<TabStateProvider>(context, listen: false);
 
     return SingleChildScrollView(
@@ -70,7 +73,7 @@ class _HomeContentState extends State<HomeContent> {
         SizedBox(height: 30),
         // CommonUiElements().sectionHeader('Nearby Activities: '),
         CommonActivityElements().activityListHeader('Nearby Activities: '),
-      CommonActivityElements().displayAllActivities(ActivityHandler().nearByActivities, true, context)
+     CommonActivityElements().displayAllActivities(ActivityHandler().nearByActivities, widget.user, true, context)
       ],
     ));
   }

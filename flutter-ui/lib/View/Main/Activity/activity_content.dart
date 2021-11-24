@@ -30,6 +30,7 @@ class _ActivityContentState extends State<ActivityContent>
 
   @override
   Widget build(BuildContext context) {
+
     allWidgetPages = [
       nameField(),
       descriptionField(),
@@ -55,6 +56,7 @@ class _ActivityContentState extends State<ActivityContent>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Spacer(),
             Form(
                 key: Key("nameFormKey"),
                 child: TextFormField(
@@ -63,8 +65,11 @@ class _ActivityContentState extends State<ActivityContent>
                     maxLines: null,
                     keyboardType: TextInputType.multiline,
                     decoration: InputDecoration(hintText: "Event Name"))),
-            SizedBox(height: 40),
-            transitionButtons(1, 1, [Icons.arrow_forward]),
+            Spacer(),
+            Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [transitionButtons(1, 1, [Icons.arrow_forward])],
+            )
           ],
         ));
   }
@@ -76,6 +81,7 @@ class _ActivityContentState extends State<ActivityContent>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Spacer(),
             Form(
                 key: Key("descriptionFormKey"),
                 child: TextFormField(
@@ -86,6 +92,7 @@ class _ActivityContentState extends State<ActivityContent>
                   decoration: InputDecoration(hintText: "Description"),
                 )),
             SizedBox(height: 40),
+            Spacer(),
             transitionButtons(2, 2, [Icons.arrow_back, Icons.arrow_forward])
           ],
         ));
@@ -97,6 +104,7 @@ class _ActivityContentState extends State<ActivityContent>
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              Spacer(),
               activityMap(),
               const SizedBox(height: 20),
               Form(
@@ -109,6 +117,7 @@ class _ActivityContentState extends State<ActivityContent>
                     textAlign: TextAlign.center,
                   )),
               const SizedBox(height: 40),
+              Spacer(),
               transitionButtons(2, 3, [Icons.arrow_back, Icons.arrow_forward])
             ]
         )
@@ -121,6 +130,7 @@ class _ActivityContentState extends State<ActivityContent>
       child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+            Spacer(),
         Container(
           padding: EdgeInsets.all(10),
           height: 500,
@@ -146,8 +156,9 @@ class _ActivityContentState extends State<ActivityContent>
             color: Colors.blueGrey.withOpacity(.2),
           ),
         ),
+            Spacer(),
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             IconButton(
                 onPressed: () {
@@ -219,7 +230,7 @@ class _ActivityContentState extends State<ActivityContent>
           iconSize: 35);
     }
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
             onPressed: () {

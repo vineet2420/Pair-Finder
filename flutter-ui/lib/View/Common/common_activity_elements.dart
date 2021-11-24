@@ -4,15 +4,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ipair/ActivityFlow/activity.dart';
 import 'package:ipair/Controller/activity_controller.dart';
+import 'package:ipair/UserFlow/user.dart';
 
 class CommonActivityElements {
   // Nearby Activities horizontal grid view on home page
-  Widget displayAllActivities(List<Activity> nearByActivities,
+  Widget displayAllActivities(List<Activity> nearByActivities, User user,
       bool displayActionsRow, BuildContext context) {
     List<Widget> smallActivitiesDisplay = [];
     for (int i = 0; i < nearByActivities.length; i++) {
       smallActivitiesDisplay.add(singleSmallCardActivity(
-          nearByActivities[i], displayActionsRow, context));
+          nearByActivities[i], user, displayActionsRow, context));
     }
 
     return Container(
@@ -27,7 +28,7 @@ class CommonActivityElements {
   }
 
   Widget singleSmallCardActivity(
-      Activity activity, bool displayActionsRow, BuildContext context) {
+      Activity activity, User user, bool displayActionsRow, BuildContext context) {
     return Container(
         padding: const EdgeInsets.all(10),
         child: GestureDetector(
@@ -62,12 +63,12 @@ class CommonActivityElements {
               showCupertinoDialog(
                   context: context,
                   builder: (context) => displayLargeActivity(
-                      activity, displayActionsRow, context));
+                      activity, user, displayActionsRow, context));
             }));
   }
 
   Widget singleLargeCardActivity(
-      Activity activity, bool displayActionsRow, BuildContext context) {
+      Activity activity, User user, bool displayActionsRow, BuildContext context) {
     LatLng pos = LatLng(activity.activityLatitude, activity.activityLongitude);
     List<Marker> marker = [
       Marker(markerId: MarkerId(pos.toString()), position: pos)
@@ -120,6 +121,9 @@ class CommonActivityElements {
                                             color: Colors.green),
                                         onPressed: () {
                                           // Add implementation for going to an activity
+
+                                          ActivityController().attendActivity(activity, user, context);
+
                                             print(activity.getActivityID);
                                             Navigator.pop(context);}))
                               ])
@@ -147,13 +151,13 @@ class CommonActivityElements {
   }
 
   Widget displayLargeActivity(
-      Activity activity, bool displayActionsRow, BuildContext context) {
+      Activity activity, User user, bool displayActionsRow, BuildContext context) {
     return Container(
         color: Colors.blueGrey.withOpacity(.8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            singleLargeCardActivity(activity, displayActionsRow, context),
+            singleLargeCardActivity(activity, user, displayActionsRow, context),
           ],
         ));
   }

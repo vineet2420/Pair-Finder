@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:ipair/ActivityFlow/activity.dart';
 import 'package:ipair/ActivityFlow/activity_handler.dart';
 import 'package:ipair/Controller/activity_controller.dart';
+import 'package:ipair/Controller/location_permissions_controller.dart';
 import 'package:ipair/Controller/tab_state_provider.dart';
 import 'package:ipair/Model/activity_model.dart';
 import 'package:ipair/UserFlow/user.dart';
@@ -45,7 +46,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     tabProvider = Provider.of<TabStateProvider>(context, listen: false);
     // Display new activities in real time
-    ActivityController().displayNewActivity(context, widget.user);
+    ActivityController().listenOnActivityUpdates(context, widget.user);
     print("in init");
 
     FetchSentAndGoingActivities();
@@ -83,10 +84,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     widgetPages = [
-      HomeContent(),
+      HomeContent(user),
       ActivityContent(user),
-      ScheduleContent()
+      ScheduleContent(user)
     ];
+    //print(ActivityHandler().nearByActivities[0].pairId);
 
     return Consumer<TabStateProvider>(
         builder: (context, tabProvider, child) => CupertinoPageScaffold(
@@ -144,7 +146,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     ActivityStateProvider activityStateProvider = Provider.of<ActivityStateProvider>(context, listen: false);
 
     try {
-      Position pos = await ActivityController().getUserLocation(context);
+      Position pos = await LocationPermissionController().getUserLocation(context);
       user.latitude = pos.latitude;
       user.longitude = pos.longitude;
 
@@ -159,7 +161,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
     catch (e) {
       if (!displayedPermissionDenied) {
-        ActivityController().permissionDeniedMessage(context);
+        LocationPermissionController().permissionDeniedMessage(context);
         displayedPermissionDenied = true;
         print(e);
       }

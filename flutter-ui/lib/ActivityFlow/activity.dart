@@ -27,6 +27,7 @@ class Activity{
 
   String _pairID = "null";
   set pairID(String pair) => _pairID = pair;
+  get pairId => _pairID;
 
   // New activity
   Activity(this.owner, this._activity_name, this._activity_description, LatLng markerPosition, this._location){

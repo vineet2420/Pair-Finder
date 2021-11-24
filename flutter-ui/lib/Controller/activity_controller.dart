@@ -18,18 +18,29 @@ import 'activity_state_provider.dart';
 
 class ActivityController {
   createActivity(Activity activity, BuildContext context, User user) async {
-
-    TabStateProvider tabProvider = Provider.of<TabStateProvider>(context, listen: false);
+    TabStateProvider tabProvider =
+        Provider.of<TabStateProvider>(context, listen: false);
 
     final List creationStatus =
         await ActivityModel().fetchActivityCreationStatus(activity);
 
     String activityData = "";
-
+    String aid = "";
     switch (creationStatus.elementAt(0)) {
       case 200:
+        ActivityStateProvider activityStateProvider =
+        Provider.of<ActivityStateProvider>(context, listen: false);
+
         activityData = await creationStatus.elementAt(1);
-        print("Activity Created Server Response: ${activityData}");
+
+        print("Activity Created Server Response: ${json.decode(activityData)["ActivityCreated"]}");
+        aid = json.decode(activityData)["ActivityCreated"].toString();
+
+        activity.setActivityID = aid;
+
+        ActivityHandler().sentActivities.add(activity);
+
+        activityStateProvider.addSentActivities(ActivityHandler().sentActivities);
 
         // Transition tab back to home
         showDialog(
@@ -85,7 +96,8 @@ class ActivityController {
         }
         // print(allActivities);
 
-        return convertJsonToActivity(rawActivityData, 'ActivitiesFound', user, type);
+        return convertJsonToActivity(
+            rawActivityData, 'ActivitiesFound', user, type);
       case 404:
       case 500:
         return [];
@@ -94,27 +106,95 @@ class ActivityController {
     }
   }
 
-  displayNewActivity(BuildContext context, User currentUser) async {
+  listenOnActivityUpdates(BuildContext context, User currentUser) async {
+    ActivityStateProvider activityStateProvider =
+        Provider.of<ActivityStateProvider>(context, listen: false);
 
-    ActivityStateProvider activityStateProvider = Provider.of<ActivityStateProvider>(context, listen: false);
-
-    int c = 0;
-    // print("called");
     ActivityModel().socket.on('message', (data) {
-      List<Activity> newSingleActivity = ActivityController()
-          .convertJsonToActivity(data, 'ActivityCreated', currentUser, FetchActivityType.Near);
 
-      if (newSingleActivity.isNotEmpty) {
+      try{
+        final realTimeUpdate = json.decode(data);
 
-        activityStateProvider.addNearByActivity(newSingleActivity[0]);
 
-        CommonUiElements().showMessage(
-            "New Event Found!", newSingleActivity[0].activityName, "Okay",
-            context);
+        if (realTimeUpdate["ActivityCreated"] != null){
+          print(realTimeUpdate);
+
+          List<Activity> newSingleActivity = ActivityController()
+              .convertJsonToActivity(
+              data, 'ActivityCreated', currentUser, FetchActivityType.Near);
+
+          if (newSingleActivity.isNotEmpty) {
+            activityStateProvider.addNearByActivity(newSingleActivity[0]);
+
+            CommonUiElements().showMessage("New Event Found!",
+                newSingleActivity[0].activityName, "Okay", context);
+          }
+
+        }
+        else if (realTimeUpdate["ActivityUpdated"] != null){
+          late Activity activityToMoveToGoing;
+          String aidReceived = realTimeUpdate["ActivityUpdated"][0].toString();
+          String activityOwner = realTimeUpdate["ActivityUpdated"][1].toString();
+          print(realTimeUpdate);
+
+          // WILL NOT work for activities just created because they do not have
+          // an id assigned yet.. fix
+          if (activityOwner == currentUser.uid.toString()) {
+
+            for (int i = 0; i<ActivityHandler().sentActivities.length; i++){
+              print("Here ${ActivityHandler().sentActivities[i].getActivityID}");
+              if (ActivityHandler().sentActivities[i].getActivityID == aidReceived){
+                print("In loop");
+                activityToMoveToGoing = ActivityHandler().sentActivities[i];
+
+                ActivityHandler().sentActivities.remove(activityToMoveToGoing);
+                ActivityHandler().attendingActivities.add(activityToMoveToGoing);
+
+                activityStateProvider.addSentActivities(ActivityHandler().sentActivities);
+                activityStateProvider.addGoingActivities(ActivityHandler().attendingActivities);
+
+                CommonUiElements()
+                    .showMessage("Activity Matched!", "Activity: ${activityToMoveToGoing.activityName}", "Okay", context);
+
+                break;
+              }
+            }
+
+
+
+          }
+        }
+
+        //print((realTimeUpdate["ActivityUpdated"] as List).length == 2);
       }
-
-      print(data);
+      catch (e){
+        print("Exception during real time update in socket: $e");
+      }
     });
+  }
+
+  attendActivity(Activity activity, User user, BuildContext context) async {
+    final List addPairResponse = await ActivityModel().addPair(activity, user);
+
+    switch (addPairResponse.elementAt(0)) {
+      case 200:
+        ActivityStateProvider activityStateProvider =
+            Provider.of<ActivityStateProvider>(context, listen: false);
+
+        ActivityHandler().nearByActivities.remove(activity);
+        ActivityHandler().attendingActivities.add(activity);
+
+        activityStateProvider
+            .addAllNearByActivities(ActivityHandler().nearByActivities);
+        activityStateProvider
+            .addGoingActivities(ActivityHandler().attendingActivities);
+        return;
+      case 404:
+      case 500:
+        return [];
+      default:
+        return [];
+    }
   }
 
   disconnectSocket() => ActivityModel().socket.disconnect();
@@ -126,81 +206,49 @@ class ActivityController {
     return "${place.name}, ${place.locality}, ${place.administrativeArea} ${place.postalCode}";
   }
 
-  Future<Position> getUserLocation(BuildContext context) async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied ||
-          permission == LocationPermission.deniedForever) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-    return await Geolocator.getCurrentPosition();
-  }
-
-  void permissionDeniedMessage(BuildContext context) {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return const AlertDialog(
-          title: Text("Location Permission Required"),
-          content: Text("Please enable location services from your settings "
-              "application to continue using the app."),
-        );
-      },
-    );
-  }
-
-  List<Activity> convertJsonToActivity(String response, String key, User user, FetchActivityType type){
+  List<Activity> convertJsonToActivity(
+      String response, String key, User user, FetchActivityType type) {
     final parsedActivities = json.decode(response);
 
     // Dynamic 2d list [[activity], [activity]] parsed from json
     List activitiesFound = parsedActivities[key] as List;
-    List<Activity> allActivities = [];
+    List<Activity> activities = [];
     // print(activitiesFound[0]);
     for (int outer = 0; outer < activitiesFound.length; outer++) {
       LatLng pos = LatLng(0, 0);
-      try{
+      try {
         pos = LatLng(activitiesFound[outer][4].toDouble(),
             activitiesFound[outer][5].toDouble());
-
-      }
-      catch (e){
-        pos = LatLng(double.parse(activitiesFound[outer][3]),
-            double.parse(activitiesFound[outer][4]));
+      } catch (e) {
+        pos = LatLng(double.parse(activitiesFound[outer][4]),
+            double.parse(activitiesFound[outer][5]));
       }
       String aid = activitiesFound[outer][0].toString();
       String owner = activitiesFound[outer][1];
       String activityName = activitiesFound[outer][2];
       String desc = activitiesFound[outer][3];
-      String pair = activitiesFound[outer][6] == "None"
-          ? ""
-          : activitiesFound[outer][6];
+      String pair =
+          activitiesFound[outer][6] == "None" ? "" : activitiesFound[outer][6];
       String location = activitiesFound[outer][7];
 
-      Activity activity =
-      Activity(owner, activityName, desc, pos, location);
+      Activity activity = Activity(owner, activityName, desc, pos, location);
       activity.pairID = pair;
       activity.setActivityID = aid;
 
-      // Skip events sent by the user to display in near by activities
-      if (type == FetchActivityType.Near && int.parse(owner) == user.uid){
+      // Skip events sent by the user to display in near by activities or if they are already matched
+      if (type == FetchActivityType.Near &&
+          (int.parse(owner) == user.uid || pair.isNotEmpty)) {
+        print("Name: $activityName Pair: $pair");
+        continue;
+      }
+      // Skip events if the pair is matched so it will appear in going, not sent anymore
+      else if (type == FetchActivityType.Sent && pair.isNotEmpty) {
         continue;
       }
 
-      allActivities.add(activity);
+      activities.add(activity);
     }
 
-    return allActivities;
+    return activities;
   }
 }

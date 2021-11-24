@@ -13,6 +13,7 @@ def create_activity():
             or request.args.get('actaddress') is None:
         return make_response('{"Bad Request": "Check URL"}', 400)
 
+    aid = ""
     ownerReceived = format(request.args.get('owner'))
     nameReceived = format(request.args.get('actname'))
     descReceived = format(request.args.get('actdesc'))
@@ -21,7 +22,20 @@ def create_activity():
     timestampReceived = format(request.args.get('creationtime'))
     addressReceived = format(request.args.get('actaddress'))
 
-    new_activity = [ownerReceived, nameReceived, descReceived, latitudeReceived, longitudeReceived, timestampReceived, addressReceived]
+    conn = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
+
+    cursor = conn.cursor()
+    SQL = 'INSERT INTO "activities" (owner, act_name, act_desc, act_latitude, act_longitude, time, address) ' \
+          'VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING aid;'
+
+    with conn, conn.cursor() as cursor:
+        cursor.execute(SQL, [ownerReceived, nameReceived, descReceived, latitudeReceived, longitudeReceived, timestampReceived, addressReceived])
+        aid = str(cursor.fetchone()[0])
+
+        status = cursor.statusmessage
+    conn.close()
+    new_activity = [aid, ownerReceived, nameReceived, descReceived, latitudeReceived, longitudeReceived, timestampReceived,
+                    addressReceived]
     new_activity_json_value = ""
     for value in new_activity:
         if isinstance(value, str):
@@ -30,23 +44,12 @@ def create_activity():
             new_activity_json_value = new_activity_json_value + value + ", "
     new_activity_json_value = new_activity_json_value[:-2]
 
-    conn = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
-
-    cursor = conn.cursor()
-    SQL = 'INSERT INTO "activities" (owner, act_name, act_desc, act_latitude, act_longitude, time, address) ' \
-          'VALUES (%s, %s, %s, %s, %s, %s, %s);'
-
-    with conn, conn.cursor() as cursor:
-        cursor.execute(SQL, [ownerReceived, nameReceived, descReceived, latitudeReceived, longitudeReceived, timestampReceived, addressReceived])
-
-    status = cursor.statusmessage
-    conn.close()
-    print(status)
+    print(new_activity_json_value)
 
     try:
         if str(status) is not "None":
             send_new_event('{"ActivityCreated": [[' + str(new_activity_json_value) + ']]}')
-            return make_response('{"ActivityCreated": "true"}', 200)
+            return make_response('{"ActivityCreated": ' + aid + '}', 200)
     except Exception as e:
         return make_response('{"ActivityCreated": "false"}', 404)
 
@@ -101,7 +104,45 @@ def fetch_ranged_activities():
 
 @app.route('/activity/fetchGoing', methods=['GET', 'POST'])
 def fetch_going_activities():
-    return fetch_activities_generic('pair')
+    if request.args.get("pair") is None:
+        return make_response('{"Bad Request": "Check URL"}', 400)
+
+    received = format(request.args.get("pair"))
+
+    conn = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
+
+    cursor = conn.cursor()
+    SQL = 'SELECT aid, owner, act_name, act_desc, act_latitude, act_longitude, pair, address FROM "activities" WHERE ' + \
+          '(((length(pair) >0) AND owner=%s) OR (pair=%s));'
+
+    with conn, conn.cursor() as cursor:
+        cursor.execute(SQL, [received, received])
+
+        all_activities = cursor.fetchall()
+
+    print(all_activities)
+    all_activities_list = []
+    all_activities_json_value = ""
+    try:
+        if (len(str(all_activities)) == 2):
+            return make_response('{"ActivitiesFound": ["false"]}', 200)
+
+        elif str(all_activities) is not "None":
+
+            for inner_tuple in all_activities:
+                all_activities_list.append(
+                    str(inner_tuple).replace("\'", "\"").replace("(", "[").replace(")", "]").replace("None",
+                                                                                                     "\"None\""))
+            # print(all_activities_list)
+
+            for activity in all_activities_list:
+                all_activities_json_value = all_activities_json_value + activity + ", "
+
+            all_activities_json_value = all_activities_json_value[:-2]
+            print(all_activities_json_value)
+            return make_response('{"ActivitiesFound": [' + str(all_activities_json_value) + ']}', 200)
+    except Exception as e:
+        return make_response('{"ErrorWhileFetchingSentActivities": ' + str(e) + '}', 404)
 
 @app.route('/activity/fetchSent', methods=['GET', 'POST'])
 def fetch_sent_activities():
@@ -111,7 +152,7 @@ def fetch_activities_generic(whereField):
     if request.args.get(whereField) is None:
         return make_response('{"Bad Request": "Check URL"}', 400)
 
-    ownerReceived = format(request.args.get(whereField))
+    received = format(request.args.get(whereField))
 
     conn = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
 
@@ -120,7 +161,7 @@ def fetch_activities_generic(whereField):
           whereField + '= %s'
 
     with conn, conn.cursor() as cursor:
-        cursor.execute(SQL, [ownerReceived])
+        cursor.execute(SQL, [received])
 
         all_activities = cursor.fetchall()
 
@@ -146,14 +187,51 @@ def fetch_activities_generic(whereField):
     except Exception as e:
         return make_response('{"ErrorWhileFetchingSentActivities": '+str(e)+'}', 404)
 
+@app.route('/activity/addUser', methods=['GET', 'POST'])
+def add_user():
+    if request.args.get("pair") is None:
+        return make_response('{"Bad Request": "Check URL"}', 400)
+
+    receivedActivityId = format(request.args.get("aid"))
+    receivedPairId = format(request.args.get("pair"))
+
+    conn = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
+
+    cursor = conn.cursor()
+    SQL = 'UPDATE "activities" SET pair=%s WHERE aid = %s RETURNING aid, owner;'
+
+    with conn, conn.cursor() as cursor:
+        cursor.execute(SQL, [receivedPairId, receivedActivityId])
+        response = cursor.fetchone()
+
+        try:
+            aid = str(response[0])
+            owner = str(response[1])
+            if (aid is not None and owner is not None):
+                json_response = '{"ActivityUpdated": [' + aid + ', ' + owner + ']}'
+                send_activity_pair_update(json_response)
+                return make_response(json_response, 200)
+        except Exception as e:
+            return make_response('{"ErrorWhileUpdatingPairId": ' + str(e) + '}', 404)
+
+    print(owner)
+
+    return owner
+
 @socket.on('connected')
 def handle_id(data):
     print(data)
+
+@socket.on('event')
+def send_activity_pair_update(ownerId):
+    print('Sent update to: ' + ownerId)
+    send(ownerId, broadcast=True, namespace="")
 
 @socket.on('message')
 def send_new_event(activity):
     print('Sent activity: ' + activity)
     send(activity, broadcast=True, namespace="")
+
 
 # @socket.on('message')
 # def send_updated_activity(activity):

@@ -95,7 +95,22 @@ class ActivityModel {
     }
   }
 
+  final String addPairRoute = "http://localhost:8000/activity/addUser?";
 
+  Future<List> addPair(Activity activity, User user) async{
+    final response;
+    try {
+      response = await http.get(
+          Uri.parse(addPairRoute + 'pair=' + user.uid.toString() +
+          '&aid=' + activity.getActivityID));
+
+      print("Pair Added Status: ${response.body}");
+      return [response.statusCode, response.body];
+    } on Exception catch (e) {
+      print("Paid Added Status Sever Error: $e");
+      return [500, "-1"];
+    }
+  }
 
 
   void connectAndListen() async {
@@ -117,7 +132,7 @@ class ActivityModel {
     //         activitySocketStream.socketStreamSink.add(data.toString());
     //     });
 
-   // socket.disconnect();
+   //socket.disconnect();
   }
 
   Future<Widget> socketOutput(BuildContext context) async {
