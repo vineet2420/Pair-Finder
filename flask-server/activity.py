@@ -34,8 +34,7 @@ def create_activity():
 
         status = cursor.statusmessage
     conn.close()
-    new_activity = [aid, ownerReceived, nameReceived, descReceived, latitudeReceived, longitudeReceived, timestampReceived,
-                    addressReceived]
+    new_activity = [aid, ownerReceived, nameReceived, descReceived, latitudeReceived, longitudeReceived, "None", addressReceived]
     new_activity_json_value = ""
     for value in new_activity:
         if isinstance(value, str):
@@ -44,7 +43,7 @@ def create_activity():
             new_activity_json_value = new_activity_json_value + value + ", "
     new_activity_json_value = new_activity_json_value[:-2]
 
-    print(new_activity_json_value)
+    print("Time? "+new_activity_json_value)
 
     try:
         if str(status) is not "None":
