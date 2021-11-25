@@ -1,8 +1,8 @@
 import 'package:http/http.dart' as http;
+import 'package:ipair/Controller/constants.dart';
 
 class Auth {
-  final String loginRoute = "http://localhost:8000/login?";
-       //"http://ec2-52-201-232-123.compute-1.amazonaws.com:5000/login?";
+  final String loginRoute = Constants().host + "/login?";
 
   Future<List> fetchCredentialStatus(String email, String password) async {
     final response;
@@ -18,8 +18,7 @@ class Auth {
     }
   }
 
-  final String signUpRoute = "http://localhost:8000/signup?";
-       //"http://ec2-52-201-232-123.compute-1.amazonaws.com:5000/signup?";
+  final String signUpRoute = Constants().host + "/signup?";
 
   Future<List> fetchCreateUserStatus(String firstName, String lastName,
       String email, String uname, String password) async {
@@ -37,8 +36,7 @@ class Auth {
     }
   }
 
-  final String userDetailsRoute = "http://localhost:8000/getuser?uid=";
-      //"http://ec2-52-201-232-123.compute-1.amazonaws.com:5000/getuser?uid=";
+  final String userDetailsRoute = Constants().host + "/getuser?uid=";
 
   Future<List> fetchUserDetails(int uid) async {
     try {

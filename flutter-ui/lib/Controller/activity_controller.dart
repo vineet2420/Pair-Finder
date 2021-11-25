@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -9,9 +8,6 @@ import 'package:ipair/Controller/tab_state_provider.dart';
 import 'package:ipair/Model/activity_model.dart';
 import 'package:ipair/UserFlow/user.dart';
 import 'package:ipair/View/Common/common_ui_elements.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:ipair/View/Main/Home/home.dart';
-import 'package:socket_io_client/src/socket.dart';
 import 'package:provider/provider.dart';
 
 import 'activity_state_provider.dart';
@@ -119,6 +115,7 @@ class ActivityController {
         if (realTimeUpdate["ActivityCreated"] != null){
           print(realTimeUpdate);
 
+          print("Here $data");
           List<Activity> newSingleActivity = ActivityController()
               .convertJsonToActivity(
               data, 'ActivityCreated', currentUser, FetchActivityType.Near);
@@ -137,8 +134,6 @@ class ActivityController {
           String activityOwner = realTimeUpdate["ActivityUpdated"][1].toString();
           print(realTimeUpdate);
 
-          // WILL NOT work for activities just created because they do not have
-          // an id assigned yet.. fix
           if (activityOwner == currentUser.uid.toString()) {
 
             for (int i = 0; i<ActivityHandler().sentActivities.length; i++){
@@ -178,16 +173,22 @@ class ActivityController {
 
     switch (addPairResponse.elementAt(0)) {
       case 200:
-        ActivityStateProvider activityStateProvider =
-            Provider.of<ActivityStateProvider>(context, listen: false);
+        try{
+          var tes  = Provider.of<ActivityStateProvider>(context, listen: false);
+          //ActivityStateProvider activityStateProvider = await Provider.of<ActivityStateProvider>(context, listen: false);
+          ActivityHandler().nearByActivities.remove(activity);
+          ActivityHandler().attendingActivities.add(activity);
 
-        ActivityHandler().nearByActivities.remove(activity);
-        ActivityHandler().attendingActivities.add(activity);
+          tes
+              .addAllNearByActivities(ActivityHandler().nearByActivities);
+          tes
+              .addGoingActivities(ActivityHandler().attendingActivities);
+        }
+        catch (e){
+          print(e);
+        }
 
-        activityStateProvider
-            .addAllNearByActivities(ActivityHandler().nearByActivities);
-        activityStateProvider
-            .addGoingActivities(ActivityHandler().attendingActivities);
+
         return;
       case 404:
       case 500:

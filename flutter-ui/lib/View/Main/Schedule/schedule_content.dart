@@ -26,7 +26,8 @@ class _ScheduleContentState extends State<ScheduleContent> {
 
   Widget setupSchedule() {
 
-    return Column(
+    return SingleChildScrollView(
+        child:Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         CommonActivityElements().activityListHeader("Sent:"),
@@ -34,6 +35,6 @@ class _ScheduleContentState extends State<ScheduleContent> {
         CommonActivityElements().activityListHeader("Going:"),
        CommonActivityElements().displayAllActivities(ActivityHandler().attendingActivities, widget.user, false, context),
       ],
-    );
+    ));
   }
 }
