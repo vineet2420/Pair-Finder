@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ipair/ActivityFlow/activity_handler.dart';
@@ -20,9 +22,15 @@ class HomeContent extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeContentState();
 }
 
+enum MainActivityTypes{
+  Dining, Explore, Random
+}
+
 class _HomeContentState extends State<HomeContent> {
 
   List<TextButton> presetButtons = [];
+  late TabStateProvider tabProvider;
+  late ActivityStateProvider activityStateProvider;
 
   @override
   Widget build(BuildContext context) => Consumer<ActivityStateProvider>(
@@ -30,7 +38,8 @@ class _HomeContentState extends State<HomeContent> {
 
   Widget setupHomeContent(ActivityStateProvider activityStateProvider) {
 
-    TabStateProvider tabProvider = Provider.of<TabStateProvider>(context, listen: false);
+    tabProvider = Provider.of<TabStateProvider>(context, listen: false);
+    this.activityStateProvider = activityStateProvider;
 
     for (int i = 0; i<Constants().icons.length; i++){
       presetButtons.add(TextButton( onPressed: () {
@@ -39,7 +48,6 @@ class _HomeContentState extends State<HomeContent> {
       },
           child: Text(Constants().icons[i].emoji, style: TextStyle(fontSize: 30),)));
     }
-
 
     return SingleChildScrollView(
         child: Column(
@@ -54,9 +62,9 @@ class _HomeContentState extends State<HomeContent> {
                 crossAxisCount: 2,
                 children: presetButtons)),
         SizedBox(height: 20),
-        sectionRow("🍴", "Dining"),
-        sectionRow("🗺", "Explore"),
-        sectionRow("❓", "Random"),
+        sectionRow("🍴", MainActivityTypes.Dining),
+        sectionRow("🗺", MainActivityTypes.Explore),
+        sectionRow("❓", MainActivityTypes.Random),
         SizedBox(height: 30),
         // CommonUiElements().sectionHeader('Nearby Activities: '),
         CommonActivityElements().activityListHeader('Nearby Activities: '),
@@ -65,8 +73,27 @@ class _HomeContentState extends State<HomeContent> {
     ));
   }
 
-  Widget sectionRow(String emoji, String title) {
-    return Container(
+  Widget sectionRow(String emoji, MainActivityTypes activityType) {
+    String enumActivityName = activityType.toString().split('.').last;
+    return GestureDetector(
+      onTap: (){
+       switch(activityType){
+         case MainActivityTypes.Dining:
+           activityStateProvider.setActivityName('Let\'s go dining!');
+           break;
+
+           case MainActivityTypes.Explore:
+          activityStateProvider.setActivityName('Let\'s go exploring!');
+          break;
+         case MainActivityTypes.Random:
+           int randomNum = Random().nextInt(Constants().icons.length);
+           activityStateProvider.setActivityName(Constants().icons[randomNum].title);
+           break;
+       }
+        tabProvider.changeTab(1);
+      },
+      child:
+        Container(
       padding: EdgeInsets.all(10),
       width: double.infinity,
       height: 100,
@@ -81,7 +108,7 @@ class _HomeContentState extends State<HomeContent> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(emoji, style: TextStyle(fontSize: 50)),
-              Text(title, style: TextStyle(fontSize: 20)),
+              Text(enumActivityName, style: TextStyle(fontSize: 20)),
               IconButton(
                   onPressed: () {},
                   icon: const Icon(
@@ -94,6 +121,7 @@ class _HomeContentState extends State<HomeContent> {
         color: Colors.blueGrey.withOpacity(.4),
       ),
       // color: Constants().themeColor.withOpacity(.5),
+    )
     );
   }
 }

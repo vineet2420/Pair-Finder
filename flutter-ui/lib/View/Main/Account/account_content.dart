@@ -42,6 +42,8 @@ class _AccountPageState extends State<AccountPage> {
           sectionRow('Email', user.getEmail()),
           sectionRow('Username', user.getUsername()),
           const SizedBox(height: 20),
+
+          /*
           CommonUiElements().sectionHeader('Notifications'),
           customWidgetSectionRow('Enable', <Widget>[
             Switch(
@@ -53,6 +55,7 @@ class _AccountPageState extends State<AccountPage> {
                 value: switchVal,
                 activeColor: Colors.red)
           ]),
+           */
           logOutButton()
         ],
       )),

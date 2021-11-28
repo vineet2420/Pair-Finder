@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ipair/ActivityFlow/activity.dart';
 import 'package:ipair/Controller/activity_controller.dart';
+import 'package:ipair/Controller/constants.dart';
 import 'package:ipair/UserFlow/user.dart';
 
 class CommonActivityElements {
@@ -29,6 +30,18 @@ class CommonActivityElements {
 
   Widget singleSmallCardActivity(
       Activity activity, User user, bool displayActionsRow, BuildContext context) {
+
+    String activityNameWithoutExtraCharacters = "";
+
+    Constants().emojiMap.forEach((key, value) {
+      activityNameWithoutExtraCharacters = activity.activityName.toString().replaceAll(RegExp(r"[^A-Za-z0-9 ]*"), "");
+      for (String keyword in value){
+        if (activityNameWithoutExtraCharacters.toString().toLowerCase().contains(keyword)){
+          activity.setEmoji = key;
+        }
+      }
+    });
+
     return Container(
         padding: const EdgeInsets.all(10),
         child: GestureDetector(
@@ -52,7 +65,7 @@ class CommonActivityElements {
                               textAlign: TextAlign.center,
                               style: const TextStyle(fontSize: 15)),
                           const SizedBox(height: 30),
-                          Text("😀", style: TextStyle(fontSize: 30))
+                          Text(activity.emoji, style: TextStyle(fontSize: 30))
                         ],
                       ),
                       color: Colors.blueGrey.withOpacity(.2),

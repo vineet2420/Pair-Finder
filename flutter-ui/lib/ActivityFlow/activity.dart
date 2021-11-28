@@ -29,6 +29,11 @@ class Activity{
   set pairID(String pair) => _pairID = pair;
   get pairId => _pairID;
 
+  String _emoji = "😀";
+  set setEmoji(String emoji) => _emoji = emoji;
+  get emoji => _emoji;
+
+
   // New activity
   Activity(this.owner, this._activity_name, this._activity_description, LatLng markerPosition, this._location){
     _latitude = markerPosition.latitude;

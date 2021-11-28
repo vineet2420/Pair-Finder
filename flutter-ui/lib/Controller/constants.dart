@@ -20,8 +20,8 @@ class Constants {
 
   String userStorageKey = 'userStorage';
 
-  //String host = 'http://ec2-18-234-104-49.compute-1.amazonaws.com:8000';
-  String host = 'http://10.0.2.2:8000';
+  String host = 'http://ec2-18-234-104-49.compute-1.amazonaws.com:8000';
+  //String host = 'http://10.0.2.2:8000';
   //String host = 'http://127.0.0.1:8000';
   //String host = 'http://127.0.0.1:5000';
 
@@ -32,7 +32,6 @@ class Constants {
     PresetActivityButtons('📚', 'Let\'s study!'),
     PresetActivityButtons('🗺', 'Let\'s go hiking!'),
     PresetActivityButtons('🍳', 'Let\'s cook!'),
-    PresetActivityButtons('🏡‍‍‍', 'Let\'s garden!'),
     PresetActivityButtons('🎨', 'Let\'s paint!'),
     PresetActivityButtons('🎭', 'Let\'s attend a show!'),
     PresetActivityButtons('🎤', 'Let\'s do karaoke!'),
@@ -44,4 +43,24 @@ class Constants {
     PresetActivityButtons('🍻', 'Let\'s grab drinks!'),
     PresetActivityButtons('🛥', 'Let\'s go boating!'),
   ];
+
+  Map<String, List<String>> emojiMap = {
+    "🍽":["food", "dining", "fastfood", "fast-food"],
+    "🍿":["movies", "movie", "watch", "popcorn"],
+    "🚵":["bike", "biking", "hiking"],
+    "📚":["study", "books", "stuyding"],
+    "🗺":["travel", "explore", "exploring", "travelling"],
+    "🍳":["cook", "cooking", "food", "make-food"],
+    "🎨":["paint", "painting", "art", "paint brush"],
+    "🎭":["festival", "concert", "show"],
+    "🎤":["singing", "sing", "karaoke"],
+    "💻":["computer", "coding", "cs", "computer", "science", "app"],
+    "🎮":["games", "gaming"],
+    "♛":["chess"],
+    "🛍":["shopping", "shop"],
+    "🚙":["car", "carpool", "uber", "lyft", "taxi"],
+    "🍻":["drinking", "bar"],
+    "🛥":["cruise", "boat", "boating"],
+    "🏡":["garden", "gardening", "plant", "planting"]
+  };
 }
