@@ -9,7 +9,6 @@ import 'package:ipair/Model/activity_model.dart';
 import 'package:ipair/UserFlow/user.dart';
 import 'package:ipair/View/Common/common_ui_elements.dart';
 import 'package:provider/provider.dart';
-
 import 'activity_state_provider.dart';
 
 class ActivityController {
@@ -51,6 +50,7 @@ class ActivityController {
                   onPressed: () {
                     Navigator.pop(context);
                     tabProvider.changeTab(2);
+                    activityStateProvider.setActivityName("");
                   },
                 ),
               ],
@@ -82,11 +82,15 @@ class ActivityController {
     switch (fetchStatus.elementAt(0)) {
       case 200:
         rawActivityData = await fetchStatus.elementAt(1);
+        // print("RAW DATA: $rawActivityData");
 
-        final parsedActivities = json.decode(rawActivityData);
+        final parsedActivities = await json.decode(rawActivityData);
+
+        // print("parsedActivities: $parsedActivities");
+
         activitiesFound = parsedActivities['ActivitiesFound'] as List;
 
-        // No events near by
+        // No events near by, sent, or going to
         if (activitiesFound[0] == "false") {
           return [];
         }
@@ -106,17 +110,16 @@ class ActivityController {
     ActivityStateProvider activityStateProvider =
         Provider.of<ActivityStateProvider>(context, listen: false);
 
-    ActivityModel().socket.on('message', (data) {
+    ActivityModel().socket.on('message', (data) async {
 
       try{
         final realTimeUpdate = json.decode(data);
 
-
         if (realTimeUpdate["ActivityCreated"] != null){
           print(realTimeUpdate);
 
-          print("Here $data");
-          List<Activity> newSingleActivity = ActivityController()
+          //print("Here $data");
+          List<Activity> newSingleActivity = await ActivityController()
               .convertJsonToActivity(
               data, 'ActivityCreated', currentUser, FetchActivityType.Near);
 
@@ -154,9 +157,6 @@ class ActivityController {
                 break;
               }
             }
-
-
-
           }
         }
 
@@ -170,24 +170,25 @@ class ActivityController {
 
   attendActivity(Activity activity, User user, BuildContext context) async {
     final List addPairResponse = await ActivityModel().addPair(activity, user);
+    TabStateProvider tabProvider =
+    Provider.of<TabStateProvider>(context, listen: false);
 
     switch (addPairResponse.elementAt(0)) {
       case 200:
         try{
-          var tes  = Provider.of<ActivityStateProvider>(context, listen: false);
-          //ActivityStateProvider activityStateProvider = await Provider.of<ActivityStateProvider>(context, listen: false);
+          var activityStateProvider  = Provider.of<ActivityStateProvider>(context, listen: false);
           ActivityHandler().nearByActivities.remove(activity);
           ActivityHandler().attendingActivities.add(activity);
 
-          tes
+          activityStateProvider
               .addAllNearByActivities(ActivityHandler().nearByActivities);
-          tes
+          activityStateProvider
               .addGoingActivities(ActivityHandler().attendingActivities);
+          tabProvider.changeTab(2);
         }
         catch (e){
           print(e);
         }
-
 
         return;
       case 404:
@@ -207,29 +208,35 @@ class ActivityController {
     return "${place.name}, ${place.locality}, ${place.administrativeArea} ${place.postalCode}";
   }
 
-  List<Activity> convertJsonToActivity(
-      String response, String key, User user, FetchActivityType type) {
-    final parsedActivities = json.decode(response);
+  Future<List<Activity>> convertJsonToActivity(
+       response, String key, User user, FetchActivityType type) async{
 
+    final parsedActivities = await json.decode(response);
+
+    // print("In Convert: $parsedActivities");
     // Dynamic 2d list [[activity], [activity]] parsed from json
     List activitiesFound = parsedActivities[key] as List;
     List<Activity> activities = [];
     // print(activitiesFound[0]);
     for (int outer = 0; outer < activitiesFound.length; outer++) {
       LatLng pos = LatLng(0, 0);
+
+
+      // print("Activities found: ${activitiesFound}");
+
       try {
         pos = LatLng(activitiesFound[outer][4].toDouble(),
             activitiesFound[outer][5].toDouble());
       } catch (e) {
-        pos = LatLng(double.parse(activitiesFound[outer][4]),
-            double.parse(activitiesFound[outer][5]));
+        pos = LatLng(double.tryParse(activitiesFound[outer][4]) ?? 0.0,
+            double.tryParse(activitiesFound[outer][5]) ?? 0.0);
+        // print(e);
       }
       String aid = activitiesFound[outer][0].toString();
-      String owner = activitiesFound[outer][1];
+      String owner = activitiesFound[outer][1].toString();
       String activityName = activitiesFound[outer][2];
-      String desc = activitiesFound[outer][3];
-      String pair =
-          activitiesFound[outer][6] == "None" ? "" : activitiesFound[outer][6];
+      String desc = activitiesFound[outer][3].toString();
+      String pair = activitiesFound[outer][6] == "None" ? "" : activitiesFound[outer][6];
       String location = activitiesFound[outer][7];
 
       Activity activity = Activity(owner, activityName, desc, pos, location);
@@ -239,7 +246,7 @@ class ActivityController {
       // Skip events sent by the user to display in near by activities or if they are already matched
       if (type == FetchActivityType.Near &&
           (int.parse(owner) == user.uid || pair.isNotEmpty)) {
-        print("Name: $activityName Pair: $pair");
+        //print("Name: $activityName Pair: $pair");
         continue;
       }
       // Skip events if the pair is matched so it will appear in going, not sent anymore

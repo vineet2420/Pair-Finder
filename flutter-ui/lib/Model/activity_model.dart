@@ -52,14 +52,21 @@ class ActivityModel {
         case FetchActivityType.Near:
           response = await http.get(
               Uri.parse(fetchNearActivityRoute + 'userlat=' + user.latitude.toString() + "&userlong=" + user.longitude.toString()
-                  + "&userradius=50"));
+                  + "&userradius=50"),
+              headers: {
+                'Content-Type':'application/json'
+              });
+
+          // print(fetchNearActivityRoute + 'userlat=' + user.latitude.toString() + "&userlong=" + user.longitude.toString()
+            //  + "&userradius=50");
+          // print("RAW RESPONSE: ${response.body.toString()}");
           return [response.statusCode, response.body];
 
         case FetchActivityType.Sent:
           response = await http.get(
               Uri.parse(fetchSentActivityRoute + 'owner=' + user.uid.toString()));
           // print("Received Sent Events: ${response.body}");
-          return [response.statusCode, response.body];
+          return [response.statusCode, response.body.toString()];
 
         case FetchActivityType.Going:
           response = await http.get(
@@ -99,7 +106,7 @@ class ActivityModel {
       socket.onConnect((data)=>print("Connected"));
     }
 
-   //socket.disconnect();
+   // socket.disconnect();
   }
 
 }

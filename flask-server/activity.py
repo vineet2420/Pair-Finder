@@ -77,25 +77,12 @@ def fetch_ranged_activities():
 
         all_activities = cursor.fetchall()
 
-    print(all_activities)
-    all_activities_list = []
-    all_activities_json_value = ""
     try:
         if (len(str(all_activities))==2):
             return make_response('{"ActivitiesFound": ["false"]}', 200)
 
         elif str(all_activities) is not "None":
-
-            for inner_tuple in all_activities:
-                all_activities_list.append(str(inner_tuple).replace("\'","\"").replace("(","[").replace(")","]").replace("None", "\"None\""))
-            #print(all_activities_list)
-
-            for activity in all_activities_list:
-                all_activities_json_value = all_activities_json_value + activity + ", "
-
-            all_activities_json_value = all_activities_json_value[:-2]
-            print(all_activities_json_value)
-            return make_response('{"ActivitiesFound": [' + str(all_activities_json_value) + ']}', 200)
+            return outputActivitiesJson(all_activities)
 
     except Exception as e:
         return make_response('{"ErrorWhileFetching": '+str(e)+'}', 404)
@@ -120,26 +107,14 @@ def fetch_going_activities():
         all_activities = cursor.fetchall()
 
     print(all_activities)
-    all_activities_list = []
-    all_activities_json_value = ""
+    
     try:
         if (len(str(all_activities)) == 2):
             return make_response('{"ActivitiesFound": ["false"]}', 200)
 
         elif str(all_activities) is not "None":
+            return outputActivitiesJson(all_activities)
 
-            for inner_tuple in all_activities:
-                all_activities_list.append(
-                    str(inner_tuple).replace("\'", "\"").replace("(", "[").replace(")", "]").replace("None",
-                                                                                                     "\"None\""))
-            # print(all_activities_list)
-
-            for activity in all_activities_list:
-                all_activities_json_value = all_activities_json_value + activity + ", "
-
-            all_activities_json_value = all_activities_json_value[:-2]
-            print(all_activities_json_value)
-            return make_response('{"ActivitiesFound": [' + str(all_activities_json_value) + ']}', 200)
     except Exception as e:
         return make_response('{"ErrorWhileFetchingSentActivities": ' + str(e) + '}', 404)
 
@@ -165,24 +140,12 @@ def fetch_activities_generic(whereField):
         all_activities = cursor.fetchall()
 
     print(all_activities)
-    all_activities_list = []
-    all_activities_json_value = ""
     try:
         if (len(str(all_activities))==2):
             return make_response('{"ActivitiesFound": ["false"]}', 200)
 
         elif str(all_activities) is not "None":
-
-            for inner_tuple in all_activities:
-                all_activities_list.append(str(inner_tuple).replace("\'","\"").replace("(","[").replace(")","]").replace("None", "\"None\""))
-            #print(all_activities_list)
-
-            for activity in all_activities_list:
-                all_activities_json_value = all_activities_json_value + activity + ", "
-
-            all_activities_json_value = all_activities_json_value[:-2]
-            print(all_activities_json_value)
-            return make_response('{"ActivitiesFound": [' + str(all_activities_json_value) + ']}', 200)
+            return outputActivitiesJson(all_activities)
     except Exception as e:
         return make_response('{"ErrorWhileFetchingSentActivities": '+str(e)+'}', 404)
 
@@ -231,6 +194,25 @@ def send_new_event(activity):
     print('Sent activity: ' + activity)
     send(activity, broadcast=True, namespace="")
 
+def outputActivitiesJson(all_activities):
+    tupleConversion = []
+    all_activities_list = []
+
+    for inner_tuple in all_activities:
+        tempList = []
+        for values in inner_tuple:
+            values = "\"" + str(values) + "\""
+            tempList.append(values)
+        tupleConversion.append(tempList)
+
+    for inner_list in tupleConversion:
+        all_activities_list.append(str(inner_list).replace("'\"", "\"").replace("\"'", "\""))
+
+    all_activities_json_value = str(all_activities_list).replace("'[", "[").replace("]'", "]").replace("\\\\\\", "")
+    print(all_activities_json_value)
+
+    # print(all_activities_json_value)
+    return make_response('{"ActivitiesFound":' + all_activities_json_value + '}', 200)
 
 # @socket.on('message')
 # def send_updated_activity(activity):

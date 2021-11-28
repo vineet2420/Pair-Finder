@@ -1,9 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ipair/ActivityFlow/activity.dart';
 import 'package:ipair/Controller/activity_controller.dart';
+import 'package:ipair/Controller/activity_state_provider.dart';
 import 'package:ipair/Controller/constants.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ipair/UserFlow/user.dart';
+import 'package:provider/provider.dart';
 
 class ActivityContent extends StatefulWidget {
   final User user;
@@ -28,8 +31,13 @@ class _ActivityContentState extends State<ActivityContent>
   late GoogleMapController mapController;
   List<Marker> marker = [];
 
+
+  late ActivityStateProvider activityStateProvider;
+
   @override
   Widget build(BuildContext context) {
+
+    activityStateProvider = Provider.of<ActivityStateProvider>(context, listen: false);
 
     allWidgetPages = [
       nameField(),
@@ -37,7 +45,8 @@ class _ActivityContentState extends State<ActivityContent>
       locationField(),
       previewActivity()
     ];
-    return page == 2
+
+    return  page == 2
         ? locationField()
         : AnimatedSwitcher(
             duration: const Duration(milliseconds: 1000),
@@ -50,6 +59,8 @@ class _ActivityContentState extends State<ActivityContent>
   }
 
   Widget nameField() {
+    nameFieldController.text = activityStateProvider.activityName;
+
     return Container(
         key: Key("nameKey"),
         padding: const EdgeInsets.all(10),
@@ -224,6 +235,9 @@ class _ActivityContentState extends State<ActivityContent>
           onPressed: () {
             setState(() {
               page = nextPage;
+
+              // For activity name text field text save
+              activityStateProvider.setActivityName(nameFieldController.text.replaceAll("\n", " "));
             });
           },
           icon: Icon(icons[0], color: Constants().themeColor),

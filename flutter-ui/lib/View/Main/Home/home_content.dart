@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ipair/ActivityFlow/activity_handler.dart';
 import 'package:ipair/Controller/activity_state_provider.dart';
+import 'package:ipair/Controller/constants.dart';
 import 'package:ipair/Controller/tab_state_provider.dart';
 import 'package:ipair/UserFlow/user.dart';
 import 'package:ipair/View/Common/common_activity_elements.dart';
@@ -21,13 +22,24 @@ class HomeContent extends StatefulWidget {
 
 class _HomeContentState extends State<HomeContent> {
 
+  List<TextButton> presetButtons = [];
+
   @override
   Widget build(BuildContext context) => Consumer<ActivityStateProvider>(
-      builder: (context, activityStateProvider, child) => setupHomeContent());
+      builder: (context, activityStateProvider, child) => setupHomeContent(activityStateProvider));
 
-  Widget setupHomeContent() {
+  Widget setupHomeContent(ActivityStateProvider activityStateProvider) {
 
     TabStateProvider tabProvider = Provider.of<TabStateProvider>(context, listen: false);
+
+    for (int i = 0; i<Constants().icons.length; i++){
+      presetButtons.add(TextButton( onPressed: () {
+        activityStateProvider.setActivityName(Constants().icons[i].title);
+        tabProvider.changeTab(1);
+      },
+          child: Text(Constants().icons[i].emoji, style: TextStyle(fontSize: 30),)));
+    }
+
 
     return SingleChildScrollView(
         child: Column(
@@ -40,32 +52,7 @@ class _HomeContentState extends State<HomeContent> {
             child: GridView.count(
                 scrollDirection: Axis.horizontal,
                 crossAxisCount: 2,
-                children: <Widget>[
-                  // TODO After midterm - refactor this into its own object with more info about destination
-
-                  IconButton(icon: Icon(Icons.next_plan), onPressed: (){
-                    tabProvider.changeTab(1);
-                    print("pushed");
-                  },),
-                  Center(child: Text("🍽", style: TextStyle(fontSize: 30))),
-                  Center(child: Text("🍿", style: TextStyle(fontSize: 30))),
-                  Center(child: Text("🚵‍♀️", style: TextStyle(fontSize: 30))),
-                  Center(child: Text("📚", style: TextStyle(fontSize: 30))),
-                  Center(child: Text("🗺", style: TextStyle(fontSize: 30))),
-                  Center(child: Text("🧑‍🍳", style: TextStyle(fontSize: 30))),
-                  Center(child: Text("👩‍🌾", style: TextStyle(fontSize: 30))),
-                  Center(child: Text("🎨", style: TextStyle(fontSize: 30))),
-                  Center(child: Text("🎭", style: TextStyle(fontSize: 30))),
-                  Center(child: Text("🎤", style: TextStyle(fontSize: 30))),
-                  Center(child: Text("🧑‍💻", style: TextStyle(fontSize: 30))),
-                  Center(child: Text("🕺", style: TextStyle(fontSize: 30))),
-                  Center(child: Text("🎮", style: TextStyle(fontSize: 30))),
-                  Center(child: Text("♛", style: TextStyle(fontSize: 30))),
-                  Center(child: Text("🛍", style: TextStyle(fontSize: 30))),
-                  Center(child: Text("🚙", style: TextStyle(fontSize: 30))),
-                  Center(child: Text("🍻", style: TextStyle(fontSize: 30))),
-                  Center(child: Text("🛥", style: TextStyle(fontSize: 30))),
-                ])),
+                children: presetButtons)),
         SizedBox(height: 20),
         sectionRow("🍴", "Dining"),
         sectionRow("🗺", "Explore"),
