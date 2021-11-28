@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ipair/ActivityFlow/activity.dart';
 import 'package:ipair/Controller/activity_controller.dart';
 import 'package:ipair/Controller/activity_state_provider.dart';
+import 'package:ipair/Controller/auth_controller.dart';
 import 'package:ipair/Controller/constants.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ipair/UserFlow/user.dart';
@@ -27,6 +28,11 @@ class _ActivityContentState extends State<ActivityContent>
   TextEditingController nameFieldController = TextEditingController();
   TextEditingController descFieldController = TextEditingController();
   TextEditingController searchFieldController = TextEditingController();
+
+  final GlobalKey<FormState> nameFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> descFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> locationFormKey = GlobalKey<FormState>();
+
 
   late GoogleMapController mapController;
   List<Marker> marker = [];
@@ -69,9 +75,10 @@ class _ActivityContentState extends State<ActivityContent>
           children: <Widget>[
             Spacer(),
             Form(
-                key: Key("nameFormKey"),
+                key: nameFormKey,
                 child: TextFormField(
                     controller: nameFieldController,
+                    validator: (value) => AuthController().validateTextField(value, "Event Name", 2),
                     maxLength: 100,
                     maxLines: null,
                     keyboardType: TextInputType.multiline,
@@ -94,9 +101,10 @@ class _ActivityContentState extends State<ActivityContent>
           children: <Widget>[
             Spacer(),
             Form(
-                key: Key("descriptionFormKey"),
+                key: descFormKey,
                 child: TextFormField(
                   controller: descFieldController,
+                  validator: (value) => AuthController().validateTextField(value, "Description", 2),
                   maxLength: 500,
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
@@ -111,6 +119,7 @@ class _ActivityContentState extends State<ActivityContent>
 
   Widget locationField() {
     return Container(
+        key: Key("locationKey"),
         padding: const EdgeInsets.all(10),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -119,11 +128,18 @@ class _ActivityContentState extends State<ActivityContent>
               activityMap(),
               const SizedBox(height: 20),
               Form(
-                  key: Key("searchFormKey"),
+                  key: locationFormKey,
                   child: TextFormField(
                     controller: searchFieldController,
                     maxLines: null,
-                    enabled: false,
+                    validator: (value){
+                      if (marker.isEmpty){
+                        return "Please tap to add a location on the map.";
+                      }
+                      else{
+                        return AuthController().validateTextField(value, "Search", 2);
+                      }
+                    },
                     decoration: InputDecoration(hintText: "Search"),
                     textAlign: TextAlign.center,
                   )),
@@ -233,12 +249,15 @@ class _ActivityContentState extends State<ActivityContent>
     if (buttons == 1) {
       return IconButton(
           onPressed: () {
-            setState(() {
-              page = nextPage;
+            if (nameFormKey.currentState!.validate()) {
+              setState(() {
+                page = nextPage;
 
-              // For activity name text field text save
-              activityStateProvider.setActivityName(nameFieldController.text.replaceAll("\n", " "));
-            });
+                // For activity name text field text save
+                activityStateProvider.setActivityName(
+                    nameFieldController.text.replaceAll("\n", " "));
+              });
+            }
           },
           icon: Icon(icons[0], color: Constants().themeColor),
           iconSize: 35);
@@ -257,9 +276,21 @@ class _ActivityContentState extends State<ActivityContent>
         SizedBox(width: 50),
         IconButton(
             onPressed: () {
-              setState(() {
+              if (page == 1 && descFormKey.currentState!.validate()) {
+                  setState(() {
+                    page = nextPage;
+                  });
+                }
+              else if (page == 2 && locationFormKey.currentState!.validate()) {
+                setState(() {
                 page = nextPage;
-              });
+                });
+              }
+              else if (page > 2){
+                setState(() {
+                  page = nextPage;
+                });
+              }
             },
             icon: Icon(icons[1], color: Constants().themeColor),
             iconSize: 35),
