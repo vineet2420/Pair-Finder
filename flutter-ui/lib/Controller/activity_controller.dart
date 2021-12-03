@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:ffi';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -6,10 +8,14 @@ import 'package:ipair/ActivityFlow/activity.dart';
 import 'package:ipair/ActivityFlow/activity_handler.dart';
 import 'package:ipair/Controller/tab_state_provider.dart';
 import 'package:ipair/Model/activity_model.dart';
+import 'package:ipair/UserFlow/local_storage.dart';
 import 'package:ipair/UserFlow/user.dart';
 import 'package:ipair/View/Common/common_ui_elements.dart';
 import 'package:provider/provider.dart';
 import 'activity_state_provider.dart';
+import 'package:vector_math/vector_math.dart';
+
+import 'constants.dart';
 
 class ActivityController {
   createActivity(Activity activity, BuildContext context, User user) async {
@@ -24,18 +30,20 @@ class ActivityController {
     switch (creationStatus.elementAt(0)) {
       case 200:
         ActivityStateProvider activityStateProvider =
-        Provider.of<ActivityStateProvider>(context, listen: false);
+            Provider.of<ActivityStateProvider>(context, listen: false);
 
         activityData = await creationStatus.elementAt(1);
 
-        print("Activity Created Server Response: ${json.decode(activityData)["ActivityCreated"]}");
+        print(
+            "Activity Created Server Response: ${json.decode(activityData)["ActivityCreated"]}");
         aid = json.decode(activityData)["ActivityCreated"].toString();
 
         activity.setActivityID = aid;
 
         ActivityHandler().sentActivities.add(activity);
 
-        activityStateProvider.addSentActivities(ActivityHandler().sentActivities);
+        activityStateProvider
+            .addSentActivities(ActivityHandler().sentActivities);
 
         // Transition tab back to home
         showDialog(
@@ -111,48 +119,62 @@ class ActivityController {
         Provider.of<ActivityStateProvider>(context, listen: false);
 
     ActivityModel().socket.on('message', (data) async {
-
-      try{
+      try {
         final realTimeUpdate = json.decode(data);
 
-        if (realTimeUpdate["ActivityCreated"] != null){
+        // New event written to db, check if within radius
+        if (realTimeUpdate["ActivityCreated"] != null) {
           print(realTimeUpdate);
 
           //print("Here $data");
           List<Activity> newSingleActivity = await ActivityController()
               .convertJsonToActivity(
-              data, 'ActivityCreated', currentUser, FetchActivityType.Near);
+                  data, 'ActivityCreated', currentUser, FetchActivityType.Near);
 
           if (newSingleActivity.isNotEmpty) {
-            activityStateProvider.addNearByActivity(newSingleActivity[0]);
+            if (isWithinRadius(newSingleActivity[0].activityLatitude,
+                newSingleActivity[0].activityLongitude, 50, currentUser)) {
 
-            CommonUiElements().showMessage("New Event Found!",
-                newSingleActivity[0].activityName, "Okay", context);
+              print("Within radius");
+
+              activityStateProvider.addNearByActivity(newSingleActivity[0]);
+
+              CommonUiElements().showMessage("New Event Found!",
+                  newSingleActivity[0].activityName, "Okay", context);
+            }
           }
-
         }
-        else if (realTimeUpdate["ActivityUpdated"] != null){
+        // Sent activity matched by another user
+        else if (realTimeUpdate["ActivityUpdated"] != null) {
           late Activity activityToMoveToGoing;
           String aidReceived = realTimeUpdate["ActivityUpdated"][0].toString();
-          String activityOwner = realTimeUpdate["ActivityUpdated"][1].toString();
+          String activityOwner =
+              realTimeUpdate["ActivityUpdated"][1].toString();
           print(realTimeUpdate);
 
           if (activityOwner == currentUser.uid.toString()) {
-
-            for (int i = 0; i<ActivityHandler().sentActivities.length; i++){
-              print("Here ${ActivityHandler().sentActivities[i].getActivityID}");
-              if (ActivityHandler().sentActivities[i].getActivityID == aidReceived){
-                print("In loop");
+            for (int i = 0; i < ActivityHandler().sentActivities.length; i++) {
+              // print("Here ${ActivityHandler().sentActivities[i].getActivityID}");
+              if (ActivityHandler().sentActivities[i].getActivityID ==
+                  aidReceived) {
+                // print("In loop");
                 activityToMoveToGoing = ActivityHandler().sentActivities[i];
 
                 ActivityHandler().sentActivities.remove(activityToMoveToGoing);
-                ActivityHandler().attendingActivities.add(activityToMoveToGoing);
+                ActivityHandler()
+                    .attendingActivities
+                    .add(activityToMoveToGoing);
 
-                activityStateProvider.addSentActivities(ActivityHandler().sentActivities);
-                activityStateProvider.addGoingActivities(ActivityHandler().attendingActivities);
+                activityStateProvider
+                    .addSentActivities(ActivityHandler().sentActivities);
+                activityStateProvider
+                    .addGoingActivities(ActivityHandler().attendingActivities);
 
-                CommonUiElements()
-                    .showMessage("Activity Matched!", "Activity: ${activityToMoveToGoing.activityName}", "Okay", context);
+                CommonUiElements().showMessage(
+                    "Activity Matched!",
+                    "Activity: ${activityToMoveToGoing.activityName}",
+                    "Okay",
+                    context);
 
                 break;
               }
@@ -161,8 +183,7 @@ class ActivityController {
         }
 
         //print((realTimeUpdate["ActivityUpdated"] as List).length == 2);
-      }
-      catch (e){
+      } catch (e) {
         print("Exception during real time update in socket: $e");
       }
     });
@@ -171,12 +192,13 @@ class ActivityController {
   attendActivity(Activity activity, User user, BuildContext context) async {
     final List addPairResponse = await ActivityModel().addPair(activity, user);
     TabStateProvider tabProvider =
-    Provider.of<TabStateProvider>(context, listen: false);
+        Provider.of<TabStateProvider>(context, listen: false);
 
     switch (addPairResponse.elementAt(0)) {
       case 200:
-        try{
-          var activityStateProvider  = Provider.of<ActivityStateProvider>(context, listen: false);
+        try {
+          var activityStateProvider =
+              Provider.of<ActivityStateProvider>(context, listen: false);
           ActivityHandler().nearByActivities.remove(activity);
           ActivityHandler().attendingActivities.add(activity);
 
@@ -185,8 +207,7 @@ class ActivityController {
           activityStateProvider
               .addGoingActivities(ActivityHandler().attendingActivities);
           tabProvider.changeTab(2);
-        }
-        catch (e){
+        } catch (e) {
           print(e);
         }
 
@@ -209,8 +230,7 @@ class ActivityController {
   }
 
   Future<List<Activity>> convertJsonToActivity(
-       response, String key, User user, FetchActivityType type) async{
-
+      response, String key, User user, FetchActivityType type) async {
     final parsedActivities = await json.decode(response);
 
     // print("In Convert: $parsedActivities");
@@ -220,7 +240,6 @@ class ActivityController {
     // print(activitiesFound[0]);
     for (int outer = 0; outer < activitiesFound.length; outer++) {
       LatLng pos = LatLng(0, 0);
-
 
       // print("Activities found: ${activitiesFound}");
 
@@ -236,7 +255,8 @@ class ActivityController {
       String owner = activitiesFound[outer][1].toString();
       String activityName = activitiesFound[outer][2];
       String desc = activitiesFound[outer][3].toString();
-      String pair = activitiesFound[outer][6] == "None" ? "" : activitiesFound[outer][6];
+      String pair =
+          activitiesFound[outer][6] == "None" ? "" : activitiesFound[outer][6];
       String location = activitiesFound[outer][7];
 
       Activity activity = Activity(owner, activityName, desc, pos, location);
@@ -258,5 +278,26 @@ class ActivityController {
     }
 
     return activities;
+  }
+
+  void updateRadius(User user) {
+
+    LocalStorage().cacheList(Constants().userActivityStorageKey,
+        <String>[user.getRadius().toString()]);
+
+    ActivityModel().sendUpdatedRadius(user);
+  }
+
+  bool isWithinRadius(
+      double latitude, double longitude, int radius, User user) {
+    double distance = acos(
+            sin(radians(user.latitude)) * sin(radians(latitude)) +
+                cos(radians(user.latitude)) *
+                    cos(radians(latitude)) *
+                    cos(radians(longitude) - (radians(user.longitude)))) *
+        3958.8;
+
+    print("Distance: $distance");
+    return distance <= radius;
   }
 }

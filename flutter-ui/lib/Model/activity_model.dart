@@ -109,5 +109,25 @@ class ActivityModel {
    // socket.disconnect();
   }
 
+  final String fetchRadiusUpdateRoute = Constants().host + "/activity/setRadius?";
+
+  Future<List> sendUpdatedRadius(User user) async{
+    final response;
+    try {
+      response = await http.get(Uri.parse(fetchRadiusUpdateRoute + 'radius=' +
+          user.getRadius().toString() + '&uid=' + user.uid.toString()));
+
+      print("Radius Updated Status: ${response.body}");
+
+      return [response.statusCode, response.body];
+    }
+    on Exception catch (e) {
+
+      print("Radius Updated Status Sever Error: $e");
+
+      return [500, "-1"];
+    }
+  }
+
 }
 

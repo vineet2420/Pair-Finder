@@ -65,7 +65,11 @@ class AuthController {
   void logOut(BuildContext context) {
     // Clear the cache
     LocalStorage()
-        .cacheList(Constants().userStorageKey, <String>["", "", "", ""]);
+        .cacheList(Constants().userAuthStorageKey, <String>["", "", "", ""]);
+
+    LocalStorage()
+        .cacheList(Constants().userActivityStorageKey, <String>[""]);
+
     Navigator.pushReplacementNamed(context, "/signin");
   }
 

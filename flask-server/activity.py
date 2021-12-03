@@ -180,6 +180,37 @@ def add_user():
 
     return owner
 
+
+#
+@app.route('/activity/setRadius', methods=['GET', 'POST'])
+def update_radius():
+    if request.args.get("radius") is None or request.args.get("uid") is None:
+        return make_response('{"Bad Request": "Check URL"}', 400)
+
+    receivedRadius = format(request.args.get("radius"))
+    receivedUid = format(request.args.get("uid"))
+
+    conn = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
+
+    cursor = conn.cursor()
+    SQL = 'UPDATE "user" SET radius=%s WHERE uid=%s;'
+
+    with conn, conn.cursor() as cursor:
+        cursor.execute(SQL, [receivedRadius, receivedUid])
+        response = cursor.statusmessage
+
+        print("Response: " + response);
+        try:
+            if (response == "UPDATE 1"):
+                json_response = '{"RadiusUpdated": true}'
+                return make_response(json_response, 200)
+            elif (response == "UPDATE 0"):
+                json_response = '{"RadiusUpdated": false}'
+                return make_response(json_response, 404)
+
+        except Exception as e:
+            return make_response('{"ErrorWhileUpdatingRadius": ' + str(e) + '}', 404)
+
 @socket.on('connected')
 def handle_id(data):
     print(data)

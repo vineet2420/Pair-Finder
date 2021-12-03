@@ -18,12 +18,13 @@ class Constants {
 
   MaterialColor themeColor = Colors.indigo;
 
-  String userStorageKey = 'userStorage';
+  String userAuthStorageKey = 'userStorage';
+  String userActivityStorageKey = 'userActivity';
 
-  String host = 'http://ec2-18-234-104-49.compute-1.amazonaws.com:8000';
+  // String host = 'http://ec2-18-234-104-49.compute-1.amazonaws.com:8000';
   //String host = 'http://10.0.2.2:8000';
-  //String host = 'http://127.0.0.1:8000';
-  //String host = 'http://127.0.0.1:5000';
+  String host = 'http://127.0.0.1:8000';
+  // String host = 'http://127.0.0.1:5000';
 
   List<PresetActivityButtons> icons = [
     PresetActivityButtons('🍽', 'Let\'s Grab Food!'),

@@ -18,17 +18,19 @@ def login():
         "SELECT * FROM \"user\" WHERE email=\'{" + emailReceived + "}\' AND password=\'{" + secret.hashText(
             passwordReceived) + "}\';")
     data = cursor.fetchone()
-    # print(data)
+    print(data)
     try:
         dbEmail = str(data[3][0])
         dbPassword = str(data[5][0])
+        print("Float: " + str(data[6]))
         if (dbEmail == emailReceived and dbPassword == secret.hashText(passwordReceived)):
             # print(data)
             userData = '{"uid":"' + str(data[0]) + '", "first_name":"' + data[1][0] + '", "last_name":"' + data[2][
-                0] + '", "email":"' + data[3][0] + '", "username":"' + data[4][0] + '"}'
+                0] + '", "email":"' + data[3][0] + '", "username":"' + data[4][0] + '", "radius":"' + str(data[6]) + '"}'
             return make_response(userData, 200)
 
     except Exception as e:
+        print(e)
         return make_response('{"UserExists": "false"}', 404)
 
     conn.close()
@@ -45,6 +47,7 @@ def signup():
     emailReceived = "{" + format(request.args.get('email')) + "}"
     unameReceived = "{" + format(request.args.get('uname')) + "}"
     passwordReceived = format(request.args.get('password'))
+    defaultRadius = 50.0
 
     conn = psycopg2.connect(dbname='coredb', user='postgres', host='localhost', password=secret.getDbPass())
     cur = conn.cursor()
@@ -68,9 +71,9 @@ def signup():
     if sameUsernamesList is not None and len(sameUsernamesList) > 0:
         return make_response('{"UsernameAlreadyExists": "true"}', 410)
 
-    signUpInsert = "INSERT INTO \"user\" (first_name, last_name, email, username,  password) VALUES (%s, %s, %s, %s, %s);"
+    signUpInsert = "INSERT INTO \"user\" (first_name, last_name, email, username,  password, radius) VALUES (%s, %s, %s, %s, %s, %s);"
 
-    data = (fnameReceived, lnameReceived, emailReceived, unameReceived, '{' + secret.hashText(passwordReceived) + '}')
+    data = (fnameReceived, lnameReceived, emailReceived, unameReceived, '{' + secret.hashText(passwordReceived) + '}', defaultRadius)
     with conn, conn.cursor() as cur:
         cur.execute(signUpInsert, data)
 

@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'package:ipair/Controller/activity_controller.dart';
 import 'package:ipair/Controller/constants.dart';
 import 'package:ipair/Model/activity_model.dart';
 import 'package:ipair/Model/auth_model.dart';
 import 'local_storage.dart';
-import 'package:geolocator/geolocator.dart';
 
 class User {
   String
@@ -14,6 +12,8 @@ class User {
   List<String> cachedData = <String>["", "", "", ""];
   double latitude = 0;
   double longitude = 0;
+  double _radius = 50;
+  set radius(double radius) => _radius = radius;
 
   User();
 
@@ -25,13 +25,19 @@ class User {
     _email = jsonDecode(data)['email'];
     _username = jsonDecode(data)['username'];
 
-    LocalStorage().cacheList(Constants().userStorageKey,
+    _radius = double.tryParse(jsonDecode(data)['radius']) ?? 49;
+
+    LocalStorage().cacheList(Constants().userAuthStorageKey,
         <String>[uid.toString(), _firstName, _lastName, _fullName, _email, _username]);
+
+    LocalStorage().cacheList(Constants().userActivityStorageKey,
+        <String>[double.tryParse(jsonDecode(data)['radius']).toString()]);
 
     ActivityModel().connectAndListen();
   }
 
   User.loadFromCache(List<String> data) {
+
     uid = int.tryParse(data.elementAt(0)) ?? -1;
     _firstName = data.elementAt(1);
     _lastName = data.elementAt(2);
@@ -49,6 +55,11 @@ class User {
     print("syncing with db info");
     // Controller method
     try{
+
+      List<String>? radiusCachedList = await LocalStorage().getCachedList(Constants().userActivityStorageKey) ?? ["50"];
+
+      _radius = double.parse(radiusCachedList[0]);
+
       List allData = await Auth().fetchUserDetails(uid);
       String userData = allData[1];
 
@@ -77,7 +88,7 @@ class User {
       }
 
       if (cacheRequired){
-        LocalStorage().cacheList(Constants().userStorageKey,
+        LocalStorage().cacheList(Constants().userAuthStorageKey,
             <String>[uid.toString(), _firstName, _lastName, _fullName, _email, _username]);
       }
     }
@@ -91,4 +102,5 @@ class User {
   String getFullName() => _fullName;
   String getEmail() => _email;
   String getUsername() => _username;
+  double getRadius() => _radius;
 }

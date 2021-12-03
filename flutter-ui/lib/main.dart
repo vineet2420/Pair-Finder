@@ -13,9 +13,14 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   List<String> cachedData =
-      await LocalStorage().getCachedList(Constants().userStorageKey) ??
+      await LocalStorage().getCachedList(Constants().userAuthStorageKey) ??
           <String>["", "", "", ""];
 
+  List<String> radiusData =
+      await LocalStorage().getCachedList(Constants().userActivityStorageKey) ??
+          <String>[""];
+
+  print("In radius cache: $radiusData");
   // print(cachedData);
   runApp(MyApp(cachedData));
 }
@@ -27,7 +32,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("In cache: ${cachedData}");
+    print("In auth cache: ${cachedData}");
     int uid = -1;
 
     if (cachedData.elementAt(0).isNotEmpty) {

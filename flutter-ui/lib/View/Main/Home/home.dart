@@ -5,9 +5,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:ipair/ActivityFlow/activity.dart';
 import 'package:ipair/ActivityFlow/activity_handler.dart';
 import 'package:ipair/Controller/activity_controller.dart';
+import 'package:ipair/Controller/constants.dart';
 import 'package:ipair/Controller/location_permissions_controller.dart';
 import 'package:ipair/Controller/tab_state_provider.dart';
 import 'package:ipair/Model/activity_model.dart';
+import 'package:ipair/UserFlow/local_storage.dart';
 import 'package:ipair/UserFlow/user.dart';
 import 'package:ipair/View/Common/common_ui_elements.dart';
 import 'package:provider/provider.dart';
@@ -169,7 +171,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(AppLifecycleState state) async{
+    List<String> cachedActivityData =
+        await LocalStorage().getCachedList(Constants().userActivityStorageKey) ??
+            <String>["49"];
+
     switch (state) {
       case AppLifecycleState.resumed:
         if (user.latitude == 0) {
@@ -178,6 +184,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         print("Back");
         break;
       case AppLifecycleState.inactive:
+
+        if (user.getRadius().toString()!= cachedActivityData[0].toString()){
+          print('radius changed, user: ${user.getRadius()}, local: ${cachedActivityData[0]}');
+          ActivityController().updateRadius(user);
+        }
+        else{
+          print('same radius');
+        }
+
         print("Inactive");
         break;
       case AppLifecycleState.paused:

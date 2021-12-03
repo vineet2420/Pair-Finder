@@ -20,16 +20,28 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   bool switchVal = true;
+  late double _currentSliderValue;
+
+  @override
+  void initState() {
+    _currentSliderValue = widget.user.getRadius();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     User user = widget.user;
+
     return CupertinoPageScaffold(
         child: NestedScrollView(
       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
         return <Widget>[
-          const CupertinoSliverNavigationBar(
-            largeTitle: AutoSizeText("Account"),
+        WillPopScope(
+        onWillPop: updateRadius,
+        child: const CupertinoSliverNavigationBar(
+            largeTitle: AutoSizeText("Account")
+        )
+
           )
         ];
       },
@@ -42,6 +54,20 @@ class _AccountPageState extends State<AccountPage> {
           sectionRow('Email', user.getEmail()),
           sectionRow('Username', user.getUsername()),
           const SizedBox(height: 20),
+
+          CommonUiElements().sectionHeader('Radius'),
+          Slider(
+            value: _currentSliderValue,
+            min: 5,
+            max: 100,
+            divisions: 95,
+            label: _currentSliderValue.round().toString() + " mi",
+            onChanged: (double value) {
+              setState(() {
+                _currentSliderValue = value;
+              });
+            },
+          ),
 
           /*
           CommonUiElements().sectionHeader('Notifications'),
@@ -60,6 +86,13 @@ class _AccountPageState extends State<AccountPage> {
         ],
       )),
     ));
+  }
+
+  Future<bool> updateRadius() async{
+    print("Before round: $_currentSliderValue, and after: ${_currentSliderValue.roundToDouble()}");
+    widget.user.radius = _currentSliderValue.roundToDouble();
+    print("Updated user radius in object: ${ widget.user.getRadius()}");
+    return true;
   }
 
   Widget sectionRow(String title, String content) {
