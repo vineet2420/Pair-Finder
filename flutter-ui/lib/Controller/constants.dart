@@ -21,9 +21,9 @@ class Constants {
   String userAuthStorageKey = 'userStorage';
   String userActivityStorageKey = 'userActivity';
 
-  // String host = 'http://ec2-18-234-104-49.compute-1.amazonaws.com:8000';
+  String host = 'http://ec2-3-93-151-23.compute-1.amazonaws.com:8000';
   //String host = 'http://10.0.2.2:8000';
-  String host = 'http://127.0.0.1:8000';
+  // String host = 'http://127.0.0.1:8000';
   // String host = 'http://127.0.0.1:5000';
 
   List<PresetActivityButtons> icons = [
@@ -60,7 +60,7 @@ class Constants {
     "♛":["chess"],
     "🛍":["shopping", "shop"],
     "🚙":["car", "carpool", "uber", "lyft", "taxi"],
-    "🍻":["drinking", "bar"],
+    "🍻":["drinking", "bar", "drinks"],
     "🛥":["cruise", "boat", "boating"],
     "🏡":["garden", "gardening", "plant", "planting"]
   };

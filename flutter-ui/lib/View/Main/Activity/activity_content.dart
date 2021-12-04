@@ -127,7 +127,7 @@ class _ActivityContentState extends State<ActivityContent>
               Spacer(),
               activityMap(),
               const SizedBox(height: 20),
-              Form(
+                Expanded(child:Form(
                   key: locationFormKey,
                   child: TextFormField(
                     controller: searchFieldController,
@@ -142,7 +142,7 @@ class _ActivityContentState extends State<ActivityContent>
                     },
                     decoration: InputDecoration(hintText: "Search"),
                     textAlign: TextAlign.center,
-                  )),
+                  ))),
               const SizedBox(height: 40),
               Spacer(),
               transitionButtons(2, 3, [Icons.arrow_back, Icons.arrow_forward])
@@ -279,11 +279,13 @@ class _ActivityContentState extends State<ActivityContent>
               if (page == 1 && descFormKey.currentState!.validate()) {
                   setState(() {
                     page = nextPage;
+                    FocusManager.instance.primaryFocus?.unfocus();
                   });
                 }
               else if (page == 2 && locationFormKey.currentState!.validate()) {
                 setState(() {
                 page = nextPage;
+                FocusManager.instance.primaryFocus?.unfocus();
                 });
               }
               else if (page > 2){

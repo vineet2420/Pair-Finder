@@ -4,10 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:ipair/Controller/activity_controller.dart';
+import 'package:ipair/Controller/activity_state_provider.dart';
 import 'package:ipair/Controller/auth_controller.dart';
 import 'package:ipair/Controller/constants.dart';
+import 'package:ipair/Model/activity_model.dart';
+import 'package:ipair/UserFlow/local_storage.dart';
 import 'package:ipair/UserFlow/user.dart';
 import 'package:ipair/View/Common/common_ui_elements.dart';
+import 'package:provider/provider.dart';
 
 class AccountPage extends StatefulWidget {
   final User user;
@@ -37,7 +42,7 @@ class _AccountPageState extends State<AccountPage> {
       headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
         return <Widget>[
         WillPopScope(
-        onWillPop: updateRadius,
+        onWillPop: () => updateRadius(user),
         child: const CupertinoSliverNavigationBar(
             largeTitle: AutoSizeText("Account")
         )
@@ -88,10 +93,20 @@ class _AccountPageState extends State<AccountPage> {
     ));
   }
 
-  Future<bool> updateRadius() async{
+  Future<bool> updateRadius(User user) async{
     print("Before round: $_currentSliderValue, and after: ${_currentSliderValue.roundToDouble()}");
     widget.user.radius = _currentSliderValue.roundToDouble();
     print("Updated user radius in object: ${ widget.user.getRadius()}");
+
+    ActivityStateProvider activityStateProvider = Provider.of<ActivityStateProvider>(context, listen: false);
+    List<String> cachedActivityData =
+        await LocalStorage().getCachedList(Constants().userActivityStorageKey) ??
+            <String>["49"];
+
+    if (user.getRadius().toString()!= cachedActivityData[0].toString()){
+      activityStateProvider.addAllNearByActivities(await ActivityController().fetchActivities(user, FetchActivityType.Near, context));
+    }
+
     return true;
   }
 

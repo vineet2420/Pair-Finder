@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:ipair/ActivityFlow/activity.dart';
-import 'package:ipair/ActivityFlow/activity_handler.dart';
 import 'package:ipair/Controller/activity_controller.dart';
 import 'package:ipair/Controller/constants.dart';
 import 'package:ipair/Controller/location_permissions_controller.dart';
@@ -11,7 +10,6 @@ import 'package:ipair/Controller/tab_state_provider.dart';
 import 'package:ipair/Model/activity_model.dart';
 import 'package:ipair/UserFlow/local_storage.dart';
 import 'package:ipair/UserFlow/user.dart';
-import 'package:ipair/View/Common/common_ui_elements.dart';
 import 'package:provider/provider.dart';
 import '../Activity/activity_content.dart';
 import '../Schedule/schedule_content.dart';
@@ -40,7 +38,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     user = widget.user;
     // print(user.getFullName());
 
-    await requestUserLocation();
+    await fetchNearbyActivitiesWithUserLocation();
   }
 
   @protected
@@ -85,6 +83,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+
+    print("Lat: ${user.latitude}, Long: ${user.longitude}");
     widgetPages = [
       HomeContent(user),
       ActivityContent(user),
@@ -104,6 +104,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           : "My Activities");
     },
     body: Scaffold(
+      resizeToAvoidBottomInset : false,
     body: widgetPages[tabProvider.tab],
     bottomNavigationBar: bottomNavBar(),
     ),
@@ -144,7 +145,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
   }
 
-  Future<void> requestUserLocation() async {
+  Future<void> fetchNearbyActivitiesWithUserLocation() async {
     ActivityStateProvider activityStateProvider = Provider.of<ActivityStateProvider>(context, listen: false);
 
     try {
@@ -179,7 +180,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.resumed:
         if (user.latitude == 0) {
-          requestUserLocation();
+          fetchNearbyActivitiesWithUserLocation();
         }
         print("Back");
         break;

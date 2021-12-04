@@ -23,6 +23,7 @@ class _SignInPageState extends State<SignInPage> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
+        resizeToAvoidBottomInset : false,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(20.0),

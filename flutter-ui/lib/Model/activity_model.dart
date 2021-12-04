@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:ipair/ActivityFlow/activity.dart';
 import 'package:ipair/Controller/constants.dart';
 import 'package:ipair/UserFlow/user.dart';
-import 'package:rxdart/rxdart.dart';
 import 'dart:async';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:http/http.dart' as http;
@@ -52,7 +50,7 @@ class ActivityModel {
         case FetchActivityType.Near:
           response = await http.get(
               Uri.parse(fetchNearActivityRoute + 'userlat=' + user.latitude.toString() + "&userlong=" + user.longitude.toString()
-                  + "&userradius=50"),
+                  + "&userradius="+user.getRadius().toString()),
               headers: {
                 'Content-Type':'application/json'
               });

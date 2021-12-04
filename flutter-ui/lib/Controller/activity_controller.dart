@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -133,7 +132,7 @@ class ActivityController {
 
           if (newSingleActivity.isNotEmpty) {
             if (isWithinRadius(newSingleActivity[0].activityLatitude,
-                newSingleActivity[0].activityLongitude, 50, currentUser)) {
+                newSingleActivity[0].activityLongitude, currentUser.getRadius(), currentUser)) {
 
               print("Within radius");
 
@@ -289,7 +288,7 @@ class ActivityController {
   }
 
   bool isWithinRadius(
-      double latitude, double longitude, int radius, User user) {
+      double latitude, double longitude, double radius, User user) {
     double distance = acos(
             sin(radians(user.latitude)) * sin(radians(latitude)) +
                 cos(radians(user.latitude)) *

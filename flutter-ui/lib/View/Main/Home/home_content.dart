@@ -1,16 +1,11 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:ipair/ActivityFlow/activity_handler.dart';
 import 'package:ipair/Controller/activity_state_provider.dart';
 import 'package:ipair/Controller/constants.dart';
 import 'package:ipair/Controller/tab_state_provider.dart';
 import 'package:ipair/UserFlow/user.dart';
 import 'package:ipair/View/Common/common_activity_elements.dart';
-import 'package:ipair/View/Main/Schedule/schedule_content.dart';
-import 'package:ipair/View/Common/common_ui_elements.dart';
-import 'package:ipair/ActivityFlow/activity.dart';
 import 'package:provider/provider.dart';
 
 class HomeContent extends StatefulWidget {

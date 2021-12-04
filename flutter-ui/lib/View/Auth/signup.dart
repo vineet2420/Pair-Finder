@@ -26,7 +26,11 @@ class _SignUpPageState extends State<SignUpPage> {
       body: Center(
         child: Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Column(
+            child: Container(
+            child: SingleChildScrollView(
+            child: SizedBox(
+                height: 750, // Some height
+    child: Column(
               children: <Widget>[
                 Row(children: <Widget>[
                   const SizedBox(height: 120),
@@ -53,7 +57,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 Spacer(),
               ],
-            )),
+            ))))),
       ),
     );
   }
