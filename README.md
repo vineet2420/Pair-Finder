@@ -152,15 +152,15 @@ Run this project within your own environment.
 	```
 5. Install the following packages
 		
-	`pip install flask`
+	```pip install flask```
 	
-	`pip install flask-socketio`
+	```pip install flask-socketio```
 	
-	`pip install gunicorn`
+	```pip install gunicorn```
 	
-	`pip install eventlet==0.30.2`
+	```pip install eventlet==0.30.2```
 	
-	`pip install psycopg2`
+	```pip install psycopg2```
 
 6. Copy the complete address the server is now listening at, most likely: 
 
@@ -223,7 +223,8 @@ and get started with the Google Cloud Console API Dashboard.
 	* If the connected client is within the radius of the activity, it is added to the nearby activities list and displays a notification on the screen.
 
 <center>
-<img src="readmeFiles/haversine.png" width=200px>
+<img src="readmeFiles/haversineFormula.png" width=400px>
+<img src="readmeFiles/haversine.png" width=220px>
 </center>
 
 <p align="right">(<a href="#top">back to top</a>)</p>
