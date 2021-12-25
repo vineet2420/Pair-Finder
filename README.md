@@ -237,10 +237,10 @@ and get started with the Google Cloud Console API Dashboard.
 <center>
 <table>
 <tr>
-<img src="readmeFiles/haversineFormula.png" width=350px>
+<img src="readmeFiles/haversineFormula.png" width=150px>
 </tr>
 <tr>
-<img src="readmeFiles/haversine.png" width=190px>
+<img src="readmeFiles/haversine.png" width=90px>
 </tr>
 </table>
 </center>
