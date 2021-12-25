@@ -235,8 +235,9 @@ and get started with the Google Cloud Console API Dashboard.
 	* If the connected client is within the radius of the activity, it is added to the nearby activities list and displays a notification on the screen.
 
 <center>
-<img src="readmeFiles/haversineFormula.png" width=400px>
-<img src="readmeFiles/haversine.png" width=220px>
+<img src="readmeFiles/haversineFormula.png" width=300px>
+<img src="readmeFiles/haversine.png" width=170px>
+[Img Source](https://en.wikipedia.org/wiki/Haversine_formula)
 </center>
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -253,7 +254,7 @@ and get started with the Google Cloud Console API Dashboard.
 
 <p float="left">
 <center>
-<img src="readmeFiles/realtimeVideo1.gif" style="padding-right:10%" width=300px>
+<img src="readmeFiles/realtimeVideo1.gif" style="padding-right:30%" width=300px>
 <img src="readmeFiles/realtimeVideo2.gif" width=300px>
 </center>
 </p>
