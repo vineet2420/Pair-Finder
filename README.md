@@ -234,18 +234,19 @@ and get started with the Google Cloud Console API Dashboard.
 * [Client side:](https://github.com/vineet2420/pair-finder/blob/d32c310bd5f7f45db26b9d53993bcfb9cbb2bff0/flutter-ui/lib/Controller/activity_controller.dart#L290-L301) applied when another user creates an activity, the data payload is distributed to all connected devices. 
 	* If the connected client is within the radius of the activity, it is added to the nearby activities list and displays a notification on the screen.
 
-<center>
+<details>
+<summary>View Formula and Visual</summary>
 <table>
 <tr>
-<img src="readmeFiles/haversineFormula.png" width=150px>
+<img src="readmeFiles/haversineFormula.png" width=350px>
 </tr>
 <tr>
-<img src="readmeFiles/haversine.png" width=90px>
+<img src="readmeFiles/haversine.png" width=190px>
 </tr>
 </table>
-</center>
-
 [Formula Source](https://en.wikipedia.org/wiki/Haversine_formula)
+</details>
+
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
