@@ -152,19 +152,31 @@ Run this project within your own environment.
 	```
 5. Install the following packages
 		
-	```pip install flask```
+	```
+	pip install flask
+	```
 	
-	```pip install flask-socketio```
+	```
+	pip install flask-socketio
+	```
 	
-	```pip install gunicorn```
+	```
+	pip install gunicorn
+	```
 	
-	```pip install eventlet==0.30.2```
+	```
+	pip install eventlet==0.30.2
+	```
 	
-	```pip install psycopg2```
+	```
+	pip install psycopg2
+	```
 
 6. Copy the complete address the server is now listening at, most likely: 
 
-	`http://127.0.0.1:8000`
+	```
+	http://127.0.0.1:8000
+	```
 	
 7. Go back to the flutter-ui directory opened with Android Studio or VSCode in the installation step and open 📜constants.dart located under 
 	<pre>
@@ -262,7 +274,7 @@ and get started with the Google Cloud Console API Dashboard.
 	3. Transitioning to a new tab bar widget page outside of the class where the tab bar is defined without using callbacks.
 
 For a more comprehensive deep dive into all of the functionality implemented:
-[view these slides](). 
+[view these slides](https://github.com/vineet2420/pair-finder/blob/main/readmeFiles/DeepDive.pptx). 
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
