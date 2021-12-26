@@ -72,12 +72,12 @@ Run this project within your own environment.
 
 1. Clone the repo
    ```
-   git clone https://github.com/vineet2420/pair-finder.git
+   git clone https://github.com/vineet2420/Pair-Finder.git
    ```
    
    or w/ ssh
    ```
-   git clone git@github.com:vineet2420/pair-finder.git
+   git clone git@github.com:vineet2420/Pair-Finder.git
    ```
 2. Change directories 
    ```
@@ -186,7 +186,7 @@ Run this project within your own environment.
  		┗ 📜 activity_controller.dart
  		┗ 📜 activity_state_provider.dart
  		┗ 📜 auth_controller.dart
- 		┗ 📜 **constants.dart**
+ 		┗ 📜 constants.dart
 	</pre>
 
 8. Replace the String `host` variable from the aws ec2 address to the local web server address previously copied.
@@ -244,9 +244,9 @@ and get started with the Google Cloud Console API Dashboard.
 <img src="readmeFiles/haversine.png" width=190px>
 </tr>
 </table>
-[Formula Source](https://en.wikipedia.org/wiki/Haversine_formula)
 </details>
 
+[Formula Source](https://en.wikipedia.org/wiki/Haversine_formula)
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
