@@ -171,14 +171,20 @@ Run this project within your own environment.
 	```
 	pip install psycopg2
 	```
+	
+6. Run the server 
 
-6. Copy the complete address the server is now listening at, most likely: 
+	```
+	gunicorn --worker-class eventlet -w 1 app:app
+	```
+
+7. Copy the complete address and port the server is now listening on, most likely: 
 
 	```
 	http://127.0.0.1:8000
 	```
 	
-7. Go back to the flutter-ui directory opened with Android Studio or VSCode in the installation step and open 📜constants.dart located under 
+8. Go back to the flutter-ui directory opened with Android Studio or VSCode in the installation step and open 📜constants.dart located under 
 	<pre>
 	📦 lib
 	┣ 📂 ActivityFlow
@@ -189,7 +195,7 @@ Run this project within your own environment.
  		┗ 📜 constants.dart
 	</pre>
 
-8. Replace the String `host` variable from the aws ec2 address to the local web server address previously copied.
+9. Replace the String `host` variable from the aws ec2 address to the local web server address previously copied.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
