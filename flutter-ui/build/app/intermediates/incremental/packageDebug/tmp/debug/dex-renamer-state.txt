@@ -1,4 +1,0 @@
-#Wed Dec 08 22:25:20 EST 2021
-base.0=/Users/vinnymalhotra/Documents/Fall2021/MobileDeviceProgramming/pair-finder/flutter-ui/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
-path.0=classes.dex
-renamed.0=classes.dex
